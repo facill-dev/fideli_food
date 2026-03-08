@@ -19,6 +19,11 @@ import Customers from "./pages/admin/Customers";
 import Events from "./pages/admin/Events";
 import Coupons from "./pages/admin/Coupons";
 import Settings from "./pages/admin/Settings";
+import SuperAdminLayout from "./components/superadmin/SuperAdminLayout";
+import SADashboard from "./pages/superadmin/SADashboard";
+import SAStores from "./pages/superadmin/SAStores";
+import SAOrders from "./pages/superadmin/SAOrders";
+import SAUsers from "./pages/superadmin/SAUsers";
 
 const queryClient = new QueryClient();
 
@@ -48,8 +53,16 @@ const App = () => (
                 <Route path="produtos" element={<Products />} />
                 <Route path="clientes" element={<Customers />} />
                 <Route path="eventos" element={<Events />} />
-              <Route path="cupons" element={<Coupons />} />
-              <Route path="configuracoes" element={<Settings />} />
+                <Route path="cupons" element={<Coupons />} />
+                <Route path="configuracoes" element={<Settings />} />
+              </Route>
+
+              {/* Super Admin */}
+              <Route path="/superadmin" element={<SuperAdminLayout />}>
+                <Route index element={<SADashboard />} />
+                <Route path="lojas" element={<SAStores />} />
+                <Route path="pedidos" element={<SAOrders />} />
+                <Route path="usuarios" element={<SAUsers />} />
               </Route>
 
               <Route path="*" element={<NotFound />} />
