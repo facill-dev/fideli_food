@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/table";
 import { Plus, Edit, Trash2, Tag, Search, Percent, DollarSign } from "lucide-react";
 import { getCoupons, addCoupon, updateCoupon, toggleCouponActive, deleteCoupon, type Coupon } from "@/data/couponsData";
+import CouponReports from "@/components/admin/CouponReports";
 import { toast } from "sonner";
 
 function formatCurrency(v: number) {
