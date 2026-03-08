@@ -261,6 +261,68 @@ export function updateOrderStatus(orderId: string, status: TenantOrder["status"]
   }
 }
 
+// ─── Notifications ───────────────────────────────
+
+export interface TenantNotification {
+  id: string;
+  storeId: string;
+  type: "new_order" | "status_change";
+  title: string;
+  message: string;
+  read: boolean;
+  createdAt: string;
+  orderId?: string;
+}
+
+const NOTIF_KEY = "mt_notifications";
+
+export function getNotificationsByStore(storeId: string): TenantNotification[] {
+  return getList<TenantNotification>(NOTIF_KEY)
+    .filter((n) => n.storeId === storeId)
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+}
+
+export function addNotification(
+  notification: Omit<TenantNotification, "id" | "createdAt">
+): TenantNotification {
+  const all = getList<TenantNotification>(NOTIF_KEY);
+  const newNotif: TenantNotification = {
+    ...notification,
+    id: genId(),
+    createdAt: new Date().toISOString(),
+  };
+  all.push(newNotif);
+  setList(NOTIF_KEY, all);
+  return newNotif;
+}
+
+export function markNotificationRead(notificationId: string) {
+  const all = getList<TenantNotification>(NOTIF_KEY);
+  const idx = all.findIndex((n) => n.id === notificationId);
+  if (idx !== -1) {
+    all[idx].read = true;
+    setList(NOTIF_KEY, all);
+  }
+}
+
+export function markAllNotificationsRead(storeId: string) {
+  const all = getList<TenantNotification>(NOTIF_KEY);
+  all.forEach((n) => { if (n.storeId === storeId) n.read = true; });
+  setList(NOTIF_KEY, all);
+}
+
+export function getUnreadNotificationCount(storeId: string): number {
+  return getList<TenantNotification>(NOTIF_KEY).filter(
+    (n) => n.storeId === storeId && !n.read
+  ).length;
+}
+
+// ─── Orders (extra) ──────────────────────────────
+
+export function getOrderById(orderId: string): TenantOrder | undefined {
+  return getList<TenantOrder>(KEYS.orders).find((o) => o.id === orderId);
+}
+
 // ─── Nichos ──────────────────────────────────────
 
 export const NICHES = [

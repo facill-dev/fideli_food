@@ -1,10 +1,11 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import AdminSidebar from "./AdminSidebar";
-import { Bell, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect } from "react";
+import NotificationPopover from "./NotificationPopover";
 
 export default function AdminLayout() {
   const { user, store, logout } = useAuth();
@@ -38,10 +39,7 @@ export default function AdminLayout() {
               </span>
             </div>
             <div className="flex items-center gap-1">
-              <Button variant="ghost" size="icon" className="relative shrink-0">
-                <Bell className="h-4 w-4" />
-                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-destructive rounded-full" />
-              </Button>
+              <NotificationPopover storeId={store.id} />
               <Button variant="ghost" size="icon" onClick={handleLogout} title="Sair">
                 <LogOut className="h-4 w-4" />
               </Button>

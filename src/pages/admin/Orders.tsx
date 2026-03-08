@@ -12,9 +12,9 @@ import {
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
-import { Search, ChevronRight, ClipboardList } from "lucide-react";
+import { Search, ChevronRight, ClipboardList, MessageCircle, ExternalLink } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { getOrdersByStore, updateOrderStatus, type TenantOrder } from "@/lib/multiTenantStorage";
+import { getOrdersByStore, updateOrderStatus, addNotification, type TenantOrder } from "@/lib/multiTenantStorage";
 
 const STATUS_MAP: Record<TenantOrder["status"], { label: string; className: string }> = {
   pending: { label: "Pendente", className: "bg-amber-100 text-amber-800 border-amber-200" },
@@ -46,9 +46,33 @@ export default function Orders() {
   });
 
   const handleStatusChange = (orderId: string, status: TenantOrder["status"]) => {
+    const order = orderList.find((o) => o.id === orderId);
     updateOrderStatus(orderId, status);
+    if (order) {
+      const STATUS_LABELS: Record<string, string> = {
+        confirmed: "Confirmado",
+        preparing: "Em preparação",
+        ready: "Pronto",
+        delivered: "Entregue",
+        cancelled: "Cancelado",
+      };
+      addNotification({
+        storeId,
+        type: "status_change",
+        title: `Pedido atualizado`,
+        message: `Pedido de ${order.customerName} → ${STATUS_LABELS[status] || status}`,
+        read: false,
+        orderId,
+      });
+    }
     refresh();
     setSelectedOrder(null);
+  };
+
+  const generateWhatsAppLink = (phone: string, order: TenantOrder) => {
+    const clean = phone.replace(/\D/g, "");
+    const summary = `Olá ${order.customerName}! Sobre seu pedido #${order.id.slice(-6).toUpperCase()}:\n\n${order.items.map((i) => `• ${i.qty}x ${i.name}`).join("\n")}\n\nTotal: ${formatCurrency(order.total)}`;
+    return `https://wa.me/55${clean}?text=${encodeURIComponent(summary)}`;
   };
 
   return (
@@ -238,6 +262,22 @@ export default function Orders() {
                   {selectedOrder.status !== "delivered" && (
                     <Button size="sm" variant="outline" className="flex-1" onClick={() => handleStatusChange(selectedOrder.id, "delivered")}>Entregue</Button>
                   )}
+                </div>
+                <div className="flex gap-2 pt-1">
+                  {selectedOrder.customerPhone && (
+                    <Button size="sm" variant="outline" className="flex-1 gap-1.5 text-[hsl(142,72%,29%)] border-[hsl(142,72%,29%)]/30 hover:bg-[hsl(142,72%,24%)]/10" asChild>
+                      <a href={generateWhatsAppLink(selectedOrder.customerPhone, selectedOrder)} target="_blank" rel="noopener noreferrer">
+                        <MessageCircle className="h-4 w-4" />
+                        WhatsApp
+                      </a>
+                    </Button>
+                  )}
+                  <Button size="sm" variant="outline" className="flex-1 gap-1.5" asChild>
+                    <a href={`/pedido/${selectedOrder.id}`} target="_blank" rel="noopener noreferrer">
+                      <ExternalLink className="h-4 w-4" />
+                      Link do pedido
+                    </a>
+                  </Button>
                 </div>
               </div>
             </>
