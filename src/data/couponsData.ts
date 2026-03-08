@@ -43,3 +43,79 @@ export function toggleCouponActive(id: string) {
 export function deleteCoupon(id: string) {
   coupons = coupons.filter((c) => c.id !== id);
 }
+
+// Analytics mock data
+export interface CouponUsageDay {
+  date: string;
+  uses: number;
+  revenue: number;
+  discount: number;
+}
+
+export interface CouponStats {
+  couponId: string;
+  code: string;
+  totalUses: number;
+  totalRevenue: number;
+  totalDiscount: number;
+  conversionRate: number; // % of views that used the coupon
+  avgOrderValue: number;
+  dailyUsage: CouponUsageDay[];
+}
+
+export function getCouponAnalytics(): CouponStats[] {
+  const last14Days = Array.from({ length: 14 }, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - (13 - i));
+    return d.toISOString().split("T")[0];
+  });
+
+  return coupons.map((c) => {
+    const baseUses = c.usageCount;
+    const avgOrder = c.type === "percent" ? 85 + Math.random() * 40 : 55 + Math.random() * 30;
+    const avgDisc = c.type === "percent" ? avgOrder * (c.value / 100) : c.value;
+
+    const dailyUsage: CouponUsageDay[] = last14Days.map((date) => {
+      const uses = c.active ? Math.floor(Math.random() * 6) + 1 : Math.floor(Math.random() * 2);
+      return {
+        date,
+        uses,
+        revenue: Math.round(uses * avgOrder * 100) / 100,
+        discount: Math.round(uses * avgDisc * 100) / 100,
+      };
+    });
+
+    const totalUses = dailyUsage.reduce((s, d) => s + d.uses, 0);
+    const totalRevenue = dailyUsage.reduce((s, d) => s + d.revenue, 0);
+    const totalDiscount = dailyUsage.reduce((s, d) => s + d.discount, 0);
+
+    return {
+      couponId: c.id,
+      code: c.code,
+      totalUses,
+      totalRevenue: Math.round(totalRevenue * 100) / 100,
+      totalDiscount: Math.round(totalDiscount * 100) / 100,
+      conversionRate: Math.round((15 + Math.random() * 35) * 10) / 10,
+      avgOrderValue: Math.round(avgOrder * 100) / 100,
+      dailyUsage,
+    };
+  });
+}
+
+export function getAggregatedDailyUsage() {
+  const analytics = getCouponAnalytics();
+  const dayMap: Record<string, { date: string; uses: number; revenue: number; discount: number }> = {};
+
+  for (const stat of analytics) {
+    for (const day of stat.dailyUsage) {
+      if (!dayMap[day.date]) {
+        dayMap[day.date] = { date: day.date, uses: 0, revenue: 0, discount: 0 };
+      }
+      dayMap[day.date].uses += day.uses;
+      dayMap[day.date].revenue += day.revenue;
+      dayMap[day.date].discount += day.discount;
+    }
+  }
+
+  return Object.values(dayMap).sort((a, b) => a.date.localeCompare(b.date));
+}
