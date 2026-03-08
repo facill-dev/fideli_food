@@ -12,7 +12,7 @@ import {
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
-import { Search, ChevronRight } from "lucide-react";
+import { Search, ChevronRight, ClipboardList } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { getOrdersByStore, updateOrderStatus, type TenantOrder } from "@/lib/multiTenantStorage";
 
