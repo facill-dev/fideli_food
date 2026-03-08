@@ -281,3 +281,60 @@ export const NICHES = [
 export function getAllStores(): StoreConfig[] {
   return getList<StoreConfig>(KEYS.stores);
 }
+
+// ─── Super Admin helpers ─────────────────────────
+
+const SUPER_ADMIN_EMAIL = "admin@sistema.com";
+
+export function isSuperAdmin(user: TenantUser | null): boolean {
+  return !!user && user.email === SUPER_ADMIN_EMAIL;
+}
+
+export function getAllUsers(): TenantUser[] {
+  return getList<TenantUser>(KEYS.users);
+}
+
+export function getAllOrders(): TenantOrder[] {
+  return getList<TenantOrder>(KEYS.orders);
+}
+
+export function getAllProducts(): TenantProduct[] {
+  return getList<TenantProduct>(KEYS.products);
+}
+
+export function getAllCategories(): TenantCategory[] {
+  return getList<TenantCategory>(KEYS.categories);
+}
+
+export function deleteUser(userId: string) {
+  const users = getList<TenantUser>(KEYS.users);
+  setList(KEYS.users, users.filter((u) => u.id !== userId));
+  // also remove their store, products, categories, orders
+  const stores = getList<StoreConfig>(KEYS.stores);
+  const userStore = stores.find((s) => s.ownerId === userId);
+  if (userStore) {
+    setList(KEYS.stores, stores.filter((s) => s.id !== userStore.id));
+    const products = getList<TenantProduct>(KEYS.products);
+    setList(KEYS.products, products.filter((p) => p.storeId !== userStore.id));
+    const categories = getList<TenantCategory>(KEYS.categories);
+    setList(KEYS.categories, categories.filter((c) => c.storeId !== userStore.id));
+    const orders = getList<TenantOrder>(KEYS.orders);
+    setList(KEYS.orders, orders.filter((o) => o.storeId !== userStore.id));
+  }
+}
+
+export function deleteStore(storeId: string) {
+  const stores = getList<StoreConfig>(KEYS.stores);
+  setList(KEYS.stores, stores.filter((s) => s.id !== storeId));
+  // unlink user
+  const users = getList<TenantUser>(KEYS.users);
+  const owner = users.find((u) => u.storeId === storeId);
+  if (owner) {
+    owner.storeId = undefined;
+    setList(KEYS.users, users);
+  }
+  // clean up products, categories, orders
+  setList(KEYS.products, getList<TenantProduct>(KEYS.products).filter((p) => p.storeId !== storeId));
+  setList(KEYS.categories, getList<TenantCategory>(KEYS.categories).filter((c) => c.storeId !== storeId));
+  setList(KEYS.orders, getList<TenantOrder>(KEYS.orders).filter((o) => o.storeId !== storeId));
+}
