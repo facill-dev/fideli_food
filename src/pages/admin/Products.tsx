@@ -115,10 +115,14 @@ export default function Products() {
     toast.success("Produto duplicado!");
   };
 
-  const handleDelete = (id: string) => {
-    removeProduct(id);
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
+
+  const confirmDelete = () => {
+    if (!deleteTarget) return;
+    removeProduct(deleteTarget);
     refresh();
     toast.success("Produto removido!");
+    setDeleteTarget(null);
   };
 
   const handleSave = () => {
