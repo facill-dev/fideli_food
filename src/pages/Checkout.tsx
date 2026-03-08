@@ -23,6 +23,8 @@ import {
   Clock,
   CheckCircle2,
   Sparkles,
+  Tag,
+  X,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -33,6 +35,21 @@ function formatCurrency(v: number) {
 
 type DeliveryMethod = "delivery" | "pickup";
 type PaymentMethod = "pix" | "card" | "cash";
+
+interface Coupon {
+  code: string;
+  type: "percent" | "fixed";
+  value: number;
+  minOrder: number;
+  label: string;
+}
+
+const VALID_COUPONS: Coupon[] = [
+  { code: "DOCE10", type: "percent", value: 10, minOrder: 30, label: "10% de desconto" },
+  { code: "PRIMEIRACOMPRA", type: "percent", value: 15, minOrder: 0, label: "15% de desconto" },
+  { code: "FRETE", type: "fixed", value: 8, minOrder: 50, label: "Frete grátis" },
+  { code: "ECONOMIA5", type: "fixed", value: 5, minOrder: 20, label: "R$ 5 de desconto" },
+];
 
 interface FormData {
   name: string;
@@ -66,9 +83,44 @@ export default function Checkout() {
   });
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
+  const [couponError, setCouponError] = useState("");
 
   const deliveryFee = deliveryMethod === "delivery" ? 8.0 : 0;
-  const grandTotal = total + deliveryFee;
+
+  const discount = appliedCoupon
+    ? appliedCoupon.type === "percent"
+      ? Math.round(total * appliedCoupon.value) / 100
+      : appliedCoupon.value
+    : 0;
+
+  const grandTotal = Math.max(0, total + deliveryFee - discount);
+
+  const handleApplyCoupon = () => {
+    const code = couponCode.trim().toUpperCase();
+    if (!code) return;
+    const found = VALID_COUPONS.find((c) => c.code === code);
+    if (!found) {
+      setCouponError("Cupom inválido");
+      setAppliedCoupon(null);
+      return;
+    }
+    if (total < found.minOrder) {
+      setCouponError(`Pedido mínimo de ${formatCurrency(found.minOrder)}`);
+      setAppliedCoupon(null);
+      return;
+    }
+    setAppliedCoupon(found);
+    setCouponError("");
+    toast.success(`Cupom "${found.code}" aplicado! ${found.label}`);
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCode("");
+    setCouponError("");
+  };
 
   // Cross-sell: products not in cart, different categories
   const cartCategoryIds = [...new Set(items.map((i) => i.product.category))];
@@ -403,6 +455,45 @@ export default function Checkout() {
                 </motion.div>
               )}
 
+              {/* Coupon */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-1.5">
+                  <Tag className="h-4 w-4 text-primary" />
+                  <p className="text-sm font-semibold text-foreground">Cupom de desconto</p>
+                </div>
+                {appliedCoupon ? (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center justify-between p-3 rounded-xl border border-primary/30 bg-primary/5">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <div>
+                        <p className="text-sm font-medium text-foreground">{appliedCoupon.code}</p>
+                        <p className="text-[10px] text-muted-foreground">{appliedCoupon.label} • -{formatCurrency(discount)}</p>
+                      </div>
+                    </div>
+                    <button onClick={handleRemoveCoupon} className="p-1 hover:bg-muted rounded-lg transition-colors">
+                      <X className="h-4 w-4 text-muted-foreground" />
+                    </button>
+                  </motion.div>
+                ) : (
+                  <div>
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="Digite o cupom"
+                        value={couponCode}
+                        onChange={(e) => { setCouponCode(e.target.value.toUpperCase()); setCouponError(""); }}
+                        className="flex-1 uppercase"
+                        maxLength={20}
+                        onKeyDown={(e) => e.key === "Enter" && handleApplyCoupon()}
+                      />
+                      <Button variant="outline" size="default" onClick={handleApplyCoupon} className="shrink-0">
+                        Aplicar
+                      </Button>
+                    </div>
+                    {couponError && <p className="text-xs text-destructive mt-1">{couponError}</p>}
+                  </div>
+                )}
+              </div>
+
               {/* Order summary */}
               <Separator />
               <div>
@@ -433,6 +524,12 @@ export default function Checkout() {
                       {deliveryFee === 0 ? "Grátis" : formatCurrency(deliveryFee)}
                     </span>
                   </div>
+                  {discount > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-primary">Desconto</span>
+                      <span className="text-primary font-medium">-{formatCurrency(discount)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between pt-1.5 border-t border-border">
                     <span className="text-sm font-bold text-foreground">Total</span>
                     <span className="text-lg font-bold text-foreground">{formatCurrency(grandTotal)}</span>
