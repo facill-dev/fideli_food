@@ -428,8 +428,8 @@ export default function Products() {
                   className="w-14 h-14 rounded-lg object-cover border border-border/50 shrink-0 bg-muted"
                 />
                 <div className="flex-1">
-                  <label className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-md border border-border bg-background text-sm hover:bg-accent transition-colors">
-                    📷 Escolher imagem
+                  <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border-2 border-dashed border-muted-foreground/30 bg-muted/50 text-sm font-medium text-foreground hover:bg-muted hover:border-muted-foreground/50 transition-all">
+                    <Camera className="h-4 w-4" /> Escolher imagem
                     <input
                       type="file"
                       accept="image/jpeg,image/png,image/webp"
