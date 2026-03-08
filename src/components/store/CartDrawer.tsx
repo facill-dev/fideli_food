@@ -109,7 +109,7 @@ const CartDrawer = () => {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Taxa de entrega</span>
-                  <span className="text-green-600 font-medium">Grátis</span>
+                  <span className="text-primary font-medium">Grátis</span>
                 </div>
                 <div className="flex justify-between pt-2 border-t border-border">
                   <span className="text-sm font-semibold text-foreground">Total</span>
