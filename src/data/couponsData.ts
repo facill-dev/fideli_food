@@ -102,8 +102,8 @@ export function getCouponAnalytics(days = 14): CouponStats[] {
   });
 }
 
-export function getAggregatedDailyUsage() {
-  const analytics = getCouponAnalytics();
+export function getAggregatedDailyUsage(days = 14) {
+  const analytics = getCouponAnalytics(days);
   const dayMap: Record<string, { date: string; uses: number; revenue: number; discount: number }> = {};
 
   for (const stat of analytics) {
