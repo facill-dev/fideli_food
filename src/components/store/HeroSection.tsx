@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
 import { Clock, MapPin, Star } from "lucide-react";
 import heroCake from "@/assets/hero-cake.jpg";
 import logo from "@/assets/logo.jpg";
