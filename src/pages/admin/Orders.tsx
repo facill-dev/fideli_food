@@ -143,55 +143,8 @@ function DraggableKanbanCard({ order, onClick }: { order: Order; onClick: () => 
       )}
     </div>
   );
-          <div className="flex items-center justify-between mb-2">
-            <span className="font-mono text-xs font-bold text-foreground">{order.number}</span>
-            <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${PAYMENT_MAP[order.paymentStatus].className}`}>
-              {PAYMENT_MAP[order.paymentStatus].label}
-            </Badge>
-          </div>
-          <p className="text-sm font-medium text-foreground truncate">{order.customerName}</p>
-          <p className="text-xs text-muted-foreground mt-0.5">{order.customerPhone}</p>
-
-          <div className="mt-2 space-y-1">
-            {order.items.map((item, i) => (
-              <p key={i} className="text-xs text-muted-foreground truncate">
-                {item.quantity}x {item.productName}
-              </p>
-            ))}
-          </div>
-
-          <div className="mt-3 flex items-center justify-between">
-            <span className="text-sm font-bold text-foreground">{formatCurrency(order.total)}</span>
-            {order.type === "retirada" ? (
-              <span className="flex items-center gap-0.5 text-[10px] text-muted-foreground">
-                <MapPin className="h-3 w-3" /> Retirada
-              </span>
-            ) : (
-              <span className="flex items-center gap-0.5 text-[10px] text-muted-foreground">
-                <Truck className="h-3 w-3" /> Entrega
-              </span>
-            )}
-          </div>
-
-          {(order.pickupTime || order.eventName) && (
-            <div className="mt-2 pt-2 border-t border-border/50 flex items-center gap-2 flex-wrap">
-              {order.pickupTime && (
-                <span className="flex items-center gap-0.5 text-[10px] text-muted-foreground">
-                  <Clock className="h-3 w-3" /> {order.pickupTime}
-                </span>
-              )}
-              {order.eventName && (
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium">
-                  {order.eventName}
-                </span>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
 }
+
 
 // Static card for DragOverlay
 function KanbanCardOverlay({ order }: { order: Order }) {
