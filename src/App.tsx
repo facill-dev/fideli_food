@@ -18,6 +18,7 @@ import Products from "./pages/admin/Products";
 import Customers from "./pages/admin/Customers";
 import Events from "./pages/admin/Events";
 import Coupons from "./pages/admin/Coupons";
+import Settings from "./pages/admin/Settings";
 
 const queryClient = new QueryClient();
 
@@ -47,7 +48,8 @@ const App = () => (
                 <Route path="produtos" element={<Products />} />
                 <Route path="clientes" element={<Customers />} />
                 <Route path="eventos" element={<Events />} />
-                <Route path="cupons" element={<Coupons />} />
+              <Route path="cupons" element={<Coupons />} />
+              <Route path="configuracoes" element={<Settings />} />
               </Route>
 
               <Route path="*" element={<NotFound />} />
