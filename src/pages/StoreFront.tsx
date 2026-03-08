@@ -98,7 +98,7 @@ const StoreFront = () => {
                 className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
                 style={{ backgroundColor: accentColor + "20" }}
               >
-                {niche?.icon || "🏪"}
+                <NicheIcon name={niche?.icon} className="h-8 w-8" />
               </div>
               <div>
                 <h1 className="font-display font-bold text-lg text-foreground">{store.name}</h1>
