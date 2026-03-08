@@ -18,7 +18,9 @@ export default function Settings() {
   const [address, setAddress] = useState(store?.address || "");
   const [city, setCity] = useState(store?.city || "");
   const [phone, setPhone] = useState(store?.phone || "");
-  const [hours, setHours] = useState(store?.hours || "");
+  const [schedule, setSchedule] = useState<WeekSchedule>(() => {
+    try { return store?.hours ? JSON.parse(store.hours) : DEFAULT_SCHEDULE; } catch { return DEFAULT_SCHEDULE; }
+  });
   const [instagram, setInstagram] = useState(store?.instagram || "");
   const [primaryColor, setPrimaryColor] = useState(store?.primaryColor || "#d64d7a");
 
