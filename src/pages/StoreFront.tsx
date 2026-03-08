@@ -4,6 +4,7 @@ import { getStoreBySlug, getProductsByStore, getCategoriesByStore, NICHES } from
 import type { TenantProduct, TenantCategory, StoreConfig } from "@/lib/multiTenantStorage";
 import { motion } from "framer-motion";
 import { MapPin, Clock, Star, ShoppingBag, Plus, Minus, X } from "lucide-react";
+import { NicheIcon } from "@/components/NicheIcon";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useToast } from "@/hooks/use-toast";
