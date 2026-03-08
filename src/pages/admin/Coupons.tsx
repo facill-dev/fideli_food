@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,7 @@ import {
 } from "@/components/ui/table";
 import { Plus, Edit, Trash2, Tag, Search, Percent, DollarSign } from "lucide-react";
 import { getCoupons, addCoupon, updateCoupon, toggleCouponActive, deleteCoupon, type Coupon } from "@/data/couponsData";
+import CouponReports from "@/components/admin/CouponReports";
 import { toast } from "sonner";
 
 function formatCurrency(v: number) {
@@ -135,7 +137,13 @@ export default function Coupons() {
         </Button>
       </div>
 
-      {/* Stats */}
+      <Tabs defaultValue="manage" className="space-y-4">
+        <TabsList className="w-full sm:w-auto">
+          <TabsTrigger value="manage" className="flex-1 sm:flex-none text-xs sm:text-sm">Gerenciar</TabsTrigger>
+          <TabsTrigger value="reports" className="flex-1 sm:flex-none text-xs sm:text-sm">Relatórios</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="manage" className="space-y-4 sm:space-y-6 mt-0">
       <div className="grid grid-cols-3 gap-2 sm:gap-3">
         <Card className="border-border/50">
           <CardContent className="p-3 sm:p-4">
@@ -279,6 +287,12 @@ export default function Coupons() {
           </Table>
         </CardContent>
       </Card>
+        </TabsContent>
+
+        <TabsContent value="reports" className="mt-0">
+          <CouponReports />
+        </TabsContent>
+      </Tabs>
 
       {/* Create/Edit Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
