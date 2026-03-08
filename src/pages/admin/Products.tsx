@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -6,7 +6,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { products as initialProducts, categories as initialCategories, type Product, type Category } from "@/data/mockData";
+import {
+  getProductsByStore,
+  getCategoriesByStore,
+  addProduct,
+  updateProduct,
+  deleteProduct as removeProduct,
+  addCategory,
+  type TenantProduct,
+  type TenantCategory,
+} from "@/lib/multiTenantStorage";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
@@ -23,12 +33,14 @@ function formatCurrency(v: number) {
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
 }
 
-const emptyProduct: Omit<Product, "id"> = {
+type ProductForm = Omit<TenantProduct, "id" | "storeId">;
+
+const emptyForm: ProductForm = {
   name: "",
   description: "",
   price: 0,
   image: "/placeholder.svg",
-  category: "bolos",
+  category: "",
   available: true,
   availableQty: 10,
   badge: "",
@@ -39,13 +51,22 @@ const emptyProduct: Omit<Product, "id"> = {
 };
 
 export default function Products() {
+  const { store } = useAuth();
+  const storeId = store?.id || "";
+
+  const [productList, setProductList] = useState<TenantProduct[]>(() => getProductsByStore(storeId));
+  const [categoryList, setCategoryList] = useState<TenantCategory[]>(() => getCategoriesByStore(storeId));
+
+  const refresh = useCallback(() => {
+    setProductList(getProductsByStore(storeId));
+    setCategoryList(getCategoriesByStore(storeId));
+  }, [storeId]);
+
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
-  const [productList, setProductList] = useState<Product[]>(initialProducts);
-  const [categoryList, setCategoryList] = useState<Category[]>(initialCategories);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [formData, setFormData] = useState<Omit<Product, "id">>(emptyProduct);
+  const [editingProduct, setEditingProduct] = useState<TenantProduct | null>(null);
+  const [formData, setFormData] = useState<ProductForm>(emptyForm);
   const [newCatName, setNewCatName] = useState("");
   const [showNewCatInput, setShowNewCatInput] = useState(false);
 
@@ -57,11 +78,11 @@ export default function Products() {
       toast.error("Categoria já existe");
       return;
     }
-    const newCat: Category = { id: crypto.randomUUID(), name, image: "/placeholder.svg", slug };
-    setCategoryList((prev) => [...prev, newCat]);
+    addCategory({ name, image: "/placeholder.svg", slug, storeId });
     updateForm("category", slug);
     setNewCatName("");
     setShowNewCatInput(false);
+    refresh();
     toast.success(`Categoria "${name}" criada!`);
   };
 
@@ -73,28 +94,26 @@ export default function Products() {
 
   const openNew = () => {
     setEditingProduct(null);
-    setFormData({ ...emptyProduct });
+    setFormData({ ...emptyForm, category: categoryList[0]?.slug || "" });
     setDialogOpen(true);
   };
 
-  const openEdit = (product: Product) => {
+  const openEdit = (product: TenantProduct) => {
     setEditingProduct(product);
-    setFormData({ ...product });
+    const { id, storeId: _, ...rest } = product;
+    setFormData(rest);
     setDialogOpen(true);
   };
 
-  const handleDuplicate = (product: Product) => {
-    const newProduct: Product = {
-      ...product,
-      id: crypto.randomUUID(),
-      name: `${product.name} (cópia)`,
-    };
-    setProductList((prev) => [...prev, newProduct]);
+  const handleDuplicate = (product: TenantProduct) => {
+    addProduct({ ...product, name: `${product.name} (cópia)`, storeId });
+    refresh();
     toast.success("Produto duplicado!");
   };
 
   const handleDelete = (id: string) => {
-    setProductList((prev) => prev.filter((p) => p.id !== id));
+    removeProduct(id);
+    refresh();
     toast.success("Produto removido!");
   };
 
@@ -109,19 +128,17 @@ export default function Products() {
     }
 
     if (editingProduct) {
-      setProductList((prev) =>
-        prev.map((p) => (p.id === editingProduct.id ? { ...formData, id: editingProduct.id } : p))
-      );
+      updateProduct(editingProduct.id, formData);
       toast.success("Produto atualizado!");
     } else {
-      const newProduct: Product = { ...formData, id: crypto.randomUUID() };
-      setProductList((prev) => [...prev, newProduct]);
+      addProduct({ ...formData, storeId });
       toast.success("Produto cadastrado!");
     }
+    refresh();
     setDialogOpen(false);
   };
 
-  const updateForm = <K extends keyof Omit<Product, "id">>(key: K, value: Product[K]) => {
+  const updateForm = <K extends keyof ProductForm>(key: K, value: ProductForm[K]) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
   };
 
@@ -130,7 +147,7 @@ export default function Products() {
       <div className="flex items-center justify-between gap-2">
         <div className="min-w-0">
           <h1 className="text-xl sm:text-2xl font-display font-bold text-foreground">Produtos</h1>
-          <p className="text-xs sm:text-sm text-muted-foreground mt-1 hidden sm:block">Gerencie o cardápio da confeitaria</p>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1 hidden sm:block">Gerencie o cardápio da sua loja</p>
         </div>
         <Button size="sm" className="shrink-0" onClick={openNew}>
           <Plus className="h-4 w-4 sm:mr-1" />
@@ -188,118 +205,127 @@ export default function Products() {
           </div>
         </CardHeader>
 
-        {/* Mobile card view */}
-        <CardContent className="px-3 pb-3 sm:hidden">
-          <div className="space-y-2">
-            {filtered.map((product) => (
-              <div key={product.id} className="flex items-center gap-3 p-3 rounded-lg border border-border/50 bg-card">
-                <img src={product.image} alt={product.name} className="w-12 h-12 rounded-lg object-cover shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground truncate">{product.name}</p>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-xs capitalize text-muted-foreground">{product.category}</span>
-                    {product.badge && (
-                      <Badge variant="outline" className="text-[9px] px-1 py-0">{product.badge}</Badge>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2 mt-1">
-                    {product.promoPrice ? (
-                      <>
-                        <span className="text-xs line-through text-muted-foreground">{formatCurrency(product.price)}</span>
-                        <span className="text-sm font-bold text-primary">{formatCurrency(product.promoPrice)}</span>
-                      </>
-                    ) : (
-                      <span className="text-sm font-bold text-foreground">{formatCurrency(product.price)}</span>
-                    )}
-                    <span className={`text-xs ${product.availableQty <= 5 ? "text-destructive" : "text-muted-foreground"}`}>
-                      {product.availableQty} un.
-                    </span>
-                  </div>
-                </div>
-                <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => openEdit(product)}>
-                  <Edit className="h-3.5 w-3.5" />
-                </Button>
-              </div>
-            ))}
-          </div>
-        </CardContent>
+        {/* Empty state */}
+        {productList.length === 0 && (
+          <CardContent className="text-center py-12">
+            <p className="text-4xl mb-3">📦</p>
+            <p className="text-sm text-muted-foreground mb-4">Nenhum produto cadastrado ainda.</p>
+            <Button size="sm" onClick={openNew}>
+              <Plus className="h-4 w-4 mr-1" /> Adicionar primeiro produto
+            </Button>
+          </CardContent>
+        )}
 
-        {/* Desktop table view */}
-        <CardContent className="p-0 hidden sm:block">
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow className="hover:bg-transparent">
-                  <TableHead>Produto</TableHead>
-                  <TableHead>Categoria</TableHead>
-                  <TableHead>Preço</TableHead>
-                  <TableHead className="hidden md:table-cell">Estoque</TableHead>
-                  <TableHead className="hidden lg:table-cell">Entrega</TableHead>
-                  <TableHead className="hidden lg:table-cell">Retirada</TableHead>
-                  <TableHead>Ativo</TableHead>
-                  <TableHead className="w-[100px]"></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filtered.map((product) => (
-                  <TableRow key={product.id}>
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        <img src={product.image} alt={product.name} className="w-10 h-10 rounded-lg object-cover shrink-0" />
-                        <div className="min-w-0">
-                          <p className="text-sm font-medium text-foreground truncate">{product.name}</p>
-                          {product.badge && (
-                            <Badge variant="outline" className="text-[10px] mt-0.5">{product.badge}</Badge>
-                          )}
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <span className="text-sm capitalize text-muted-foreground">{product.category}</span>
-                    </TableCell>
-                    <TableCell>
+        {/* Mobile card view */}
+        {productList.length > 0 && (
+          <CardContent className="px-3 pb-3 sm:hidden">
+            <div className="space-y-2">
+              {filtered.map((product) => (
+                <div key={product.id} className="flex items-center gap-3 p-3 rounded-lg border border-border/50 bg-card">
+                  <img src={product.image} alt={product.name} className="w-12 h-12 rounded-lg object-cover shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-foreground truncate">{product.name}</p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-xs capitalize text-muted-foreground">{product.category}</span>
+                      {product.badge && <Badge variant="outline" className="text-[9px] px-1 py-0">{product.badge}</Badge>}
+                    </div>
+                    <div className="flex items-center gap-2 mt-1">
                       {product.promoPrice ? (
-                        <div>
-                          <span className="text-sm line-through text-muted-foreground">{formatCurrency(product.price)}</span>
-                          <span className="text-sm font-bold text-primary ml-1">{formatCurrency(product.promoPrice)}</span>
-                        </div>
+                        <>
+                          <span className="text-xs line-through text-muted-foreground">{formatCurrency(product.price)}</span>
+                          <span className="text-sm font-bold text-primary">{formatCurrency(product.promoPrice)}</span>
+                        </>
                       ) : (
                         <span className="text-sm font-bold text-foreground">{formatCurrency(product.price)}</span>
                       )}
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell">
-                      <span className={`text-sm font-medium ${product.availableQty <= 5 ? "text-destructive" : "text-foreground"}`}>
+                      <span className={`text-xs ${product.availableQty <= 5 ? "text-destructive" : "text-muted-foreground"}`}>
                         {product.availableQty} un.
                       </span>
-                    </TableCell>
-                    <TableCell className="hidden lg:table-cell">
-                      <Switch checked={product.delivery} disabled className="scale-75" />
-                    </TableCell>
-                    <TableCell className="hidden lg:table-cell">
-                      <Switch checked={product.pickup} disabled className="scale-75" />
-                    </TableCell>
-                    <TableCell>
-                      <Switch checked={product.available} disabled className="scale-75" />
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex gap-1">
-                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(product)}>
-                          <Edit className="h-3.5 w-3.5" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDuplicate(product)}>
-                          <Copy className="h-3.5 w-3.5" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => handleDelete(product.id)}>
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </Button>
-                      </div>
-                    </TableCell>
+                    </div>
+                  </div>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => openEdit(product)}>
+                    <Edit className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        )}
+
+        {/* Desktop table view */}
+        {productList.length > 0 && (
+          <CardContent className="p-0 hidden sm:block">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead>Produto</TableHead>
+                    <TableHead>Categoria</TableHead>
+                    <TableHead>Preço</TableHead>
+                    <TableHead className="hidden md:table-cell">Estoque</TableHead>
+                    <TableHead className="hidden lg:table-cell">Entrega</TableHead>
+                    <TableHead className="hidden lg:table-cell">Retirada</TableHead>
+                    <TableHead>Ativo</TableHead>
+                    <TableHead className="w-[100px]"></TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
+                </TableHeader>
+                <TableBody>
+                  {filtered.map((product) => (
+                    <TableRow key={product.id}>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <img src={product.image} alt={product.name} className="w-10 h-10 rounded-lg object-cover shrink-0" />
+                          <div className="min-w-0">
+                            <p className="text-sm font-medium text-foreground truncate">{product.name}</p>
+                            {product.badge && <Badge variant="outline" className="text-[10px] mt-0.5">{product.badge}</Badge>}
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell><span className="text-sm capitalize text-muted-foreground">{product.category}</span></TableCell>
+                      <TableCell>
+                        {product.promoPrice ? (
+                          <div>
+                            <span className="text-sm line-through text-muted-foreground">{formatCurrency(product.price)}</span>
+                            <span className="text-sm font-bold text-primary ml-1">{formatCurrency(product.promoPrice)}</span>
+                          </div>
+                        ) : (
+                          <span className="text-sm font-bold text-foreground">{formatCurrency(product.price)}</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell">
+                        <span className={`text-sm font-medium ${product.availableQty <= 5 ? "text-destructive" : "text-foreground"}`}>
+                          {product.availableQty} un.
+                        </span>
+                      </TableCell>
+                      <TableCell className="hidden lg:table-cell">
+                        <Switch checked={product.delivery} disabled className="scale-75" />
+                      </TableCell>
+                      <TableCell className="hidden lg:table-cell">
+                        <Switch checked={product.pickup} disabled className="scale-75" />
+                      </TableCell>
+                      <TableCell>
+                        <Switch checked={product.available} disabled className="scale-75" />
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-1">
+                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(product)}>
+                            <Edit className="h-3.5 w-3.5" />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDuplicate(product)}>
+                            <Copy className="h-3.5 w-3.5" />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => handleDelete(product.id)}>
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        )}
       </Card>
 
       {/* Create / Edit Dialog */}
@@ -357,7 +383,7 @@ export default function Products() {
                     }
                   }}>
                     <SelectTrigger className="mt-1">
-                      <SelectValue />
+                      <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
                     <SelectContent>
                       {categoryList.map((c) => (
@@ -384,9 +410,7 @@ export default function Products() {
               <div>
                 <Label className="text-xs">Tempo de preparo</Label>
                 <Select value={formData.prepTime || "Pronta entrega"} onValueChange={(v) => updateForm("prepTime", v)}>
-                  <SelectTrigger className="mt-1">
-                    <SelectValue />
-                  </SelectTrigger>
+                  <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Pronta entrega">Pronta entrega</SelectItem>
                     <SelectItem value="Sob encomenda">Sob encomenda</SelectItem>
