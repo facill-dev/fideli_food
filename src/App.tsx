@@ -10,6 +10,7 @@ import Auth from "./pages/Auth";
 import Onboarding from "./pages/Onboarding";
 import StoreFront from "./pages/StoreFront";
 import Checkout from "./pages/Checkout";
+import OrderTracking from "./pages/OrderTracking";
 import NotFound from "./pages/NotFound";
 import AdminLayout from "./components/admin/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
