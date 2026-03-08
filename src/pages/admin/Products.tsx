@@ -26,7 +26,7 @@ import {
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from "@/components/ui/dialog";
-import { Search, Plus, Edit, Copy, Trash2, Camera, Package } from "lucide-react";
+import { Search, Plus, Edit, Copy, Trash2, Camera, Package, X } from "lucide-react";
 import { toast } from "sonner";
 
 function formatCurrency(v: number) {
