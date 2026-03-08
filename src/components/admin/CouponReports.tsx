@@ -150,7 +150,7 @@ export default function CouponReports() {
       {/* Revenue vs Discount area chart */}
       <Card className="border-border/50">
         <CardHeader className="pb-2 px-3 sm:px-6 pt-3 sm:pt-6">
-          <CardTitle className="text-sm font-display font-semibold text-foreground">Receita vs Desconto (14 dias)</CardTitle>
+          <CardTitle className="text-sm font-display font-semibold text-foreground">Receita vs Desconto ({days} dias)</CardTitle>
         </CardHeader>
         <CardContent className="px-1 sm:px-4 pb-3">
           <ResponsiveContainer width="100%" height={200}>
