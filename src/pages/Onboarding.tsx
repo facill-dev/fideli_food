@@ -9,6 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { createStore, NICHES } from "@/lib/multiTenantStorage";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
+import { NicheIcon } from "@/components/NicheIcon";
 import { ScheduleEditor, DEFAULT_SCHEDULE, formatScheduleSummary, type WeekSchedule } from "@/components/store/ScheduleEditor";
 
 const STEPS = ["Nicho", "Info", "Detalhes"];
@@ -118,7 +119,7 @@ const Onboarding = () => {
                           : "border-border hover:border-primary/40"
                       }`}
                     >
-                      <span className="text-2xl">{n.icon}</span>
+                      <NicheIcon name={n.icon} className="h-6 w-6" />
                       <span className="text-sm font-medium text-foreground">{n.label}</span>
                     </button>
                   ))}

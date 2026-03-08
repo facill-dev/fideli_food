@@ -4,6 +4,7 @@ import { getStoreBySlug, getProductsByStore, getCategoriesByStore, NICHES } from
 import type { TenantProduct, TenantCategory, StoreConfig } from "@/lib/multiTenantStorage";
 import { motion } from "framer-motion";
 import { MapPin, Clock, Star, ShoppingBag, Plus, Minus, X } from "lucide-react";
+import { NicheIcon } from "@/components/NicheIcon";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useToast } from "@/hooks/use-toast";
@@ -67,7 +68,7 @@ const StoreFront = () => {
       <header className="sticky top-0 z-50 bg-card/95 backdrop-blur-sm border-b border-border">
         <div className="container mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-lg">{niche?.icon || "🏪"}</span>
+            <NicheIcon name={niche?.icon} className="h-5 w-5 text-foreground" />
             <span className="font-display font-bold text-foreground text-sm">{store.name}</span>
           </div>
           <Button variant="ghost" size="icon" className="relative" onClick={() => setCartOpen(true)}>
@@ -97,7 +98,7 @@ const StoreFront = () => {
                 className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
                 style={{ backgroundColor: accentColor + "20" }}
               >
-                {niche?.icon || "🏪"}
+                <NicheIcon name={niche?.icon} className="h-8 w-8" />
               </div>
               <div>
                 <h1 className="font-display font-bold text-lg text-foreground">{store.name}</h1>
@@ -172,7 +173,7 @@ const StoreFront = () => {
 
         {products.length === 0 ? (
           <div className="text-center py-16 text-muted-foreground">
-            <p className="text-4xl mb-3">{niche?.icon || "🏪"}</p>
+            <NicheIcon name={niche?.icon} className="h-10 w-10 mx-auto mb-3 text-muted-foreground" />
             <p className="text-sm">Esta loja ainda não adicionou produtos ao cardápio.</p>
           </div>
         ) : (

@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Store, Zap, Palette, BarChart3, Smartphone, Globe } from "lucide-react";
+import { NicheIcon } from "@/components/NicheIcon";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { getAllStores } from "@/lib/multiTenantStorage";
@@ -113,7 +114,7 @@ const Landing = () => {
                 whileHover={{ scale: 1.05 }}
                 className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-card border border-border shadow-sm"
               >
-                <span className="text-xl">{n.icon}</span>
+                <NicheIcon name={n.icon} className="h-5 w-5" />
                 <span className="text-sm font-medium text-foreground">{n.label}</span>
               </motion.div>
             ))}
@@ -173,7 +174,7 @@ const Landing = () => {
                           className="w-10 h-10 rounded-lg flex items-center justify-center text-lg"
                           style={{ backgroundColor: s.primaryColor || "hsl(var(--primary))" }}
                         >
-                          {niche?.icon || "🏪"}
+                          <NicheIcon name={niche?.icon} className="h-5 w-5 text-white" />
                         </div>
                       )}
                       <div>

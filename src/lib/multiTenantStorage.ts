@@ -264,16 +264,16 @@ export function updateOrderStatus(orderId: string, status: TenantOrder["status"]
 // ─── Nichos ──────────────────────────────────────
 
 export const NICHES = [
-  { id: "confeitaria", label: "Confeitaria", icon: "🎂" },
-  { id: "hamburgueria", label: "Hamburgueria", icon: "🍔" },
-  { id: "pizzaria", label: "Pizzaria", icon: "🍕" },
-  { id: "restaurante", label: "Restaurante", icon: "🍽️" },
-  { id: "cafeteria", label: "Cafeteria", icon: "☕" },
-  { id: "sorveteria", label: "Sorveteria", icon: "🍦" },
-  { id: "padaria", label: "Padaria", icon: "🥐" },
-  { id: "acai", label: "Açaí & Sucos", icon: "🫐" },
-  { id: "japonesa", label: "Culinária Japonesa", icon: "🍣" },
-  { id: "outro", label: "Outro", icon: "🏪" },
+  { id: "confeitaria", label: "Confeitaria", icon: "Cake" },
+  { id: "hamburgueria", label: "Hamburgueria", icon: "Beef" },
+  { id: "pizzaria", label: "Pizzaria", icon: "Pizza" },
+  { id: "restaurante", label: "Restaurante", icon: "UtensilsCrossed" },
+  { id: "cafeteria", label: "Cafeteria", icon: "Coffee" },
+  { id: "sorveteria", label: "Sorveteria", icon: "IceCreamCone" },
+  { id: "padaria", label: "Padaria", icon: "Croissant" },
+  { id: "acai", label: "Açaí & Sucos", icon: "Cherry" },
+  { id: "japonesa", label: "Culinária Japonesa", icon: "Fish" },
+  { id: "outro", label: "Outro", icon: "Store" },
 ];
 
 // ─── All Stores (for landing/discovery) ──────────

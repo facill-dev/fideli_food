@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { updateStore, NICHES } from "@/lib/multiTenantStorage";
 import { toast } from "sonner";
 import { Save, ExternalLink, Copy } from "lucide-react";
+import { NicheIcon } from "@/components/NicheIcon";
 import { ScheduleEditor, DEFAULT_SCHEDULE, type WeekSchedule } from "@/components/store/ScheduleEditor";
 
 export default function Settings() {
@@ -92,7 +93,7 @@ export default function Settings() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
-              <span className="text-2xl">{niche?.icon || "🏪"}</span>
+              <NicheIcon name={niche?.icon} className="h-6 w-6 text-primary" />
               <div>
                 <p className="text-sm font-medium text-foreground">{niche?.label || store.niche}</p>
                 <p className="text-xs text-muted-foreground">Nicho · slug: {store.slug}</p>
