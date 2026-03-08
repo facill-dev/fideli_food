@@ -12,6 +12,7 @@ import {
   TrendingUp,
   ArrowUpRight,
   ExternalLink,
+  Rocket,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -81,7 +82,7 @@ export default function Dashboard() {
       {isEmpty ? (
         <Card className="border-border/50">
           <CardContent className="p-6 sm:p-10 text-center">
-            <p className="text-4xl mb-4">🚀</p>
+            <Rocket className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
             <h2 className="font-display text-lg font-bold text-foreground mb-2">
               Comece a montar seu cardápio!
             </h2>

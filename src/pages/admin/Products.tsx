@@ -26,7 +26,7 @@ import {
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from "@/components/ui/dialog";
-import { Search, Plus, Edit, Copy, Trash2, Camera, Package } from "lucide-react";
+import { Search, Plus, Edit, Copy, Trash2, Camera, Package, X } from "lucide-react";
 import { toast } from "sonner";
 
 function formatCurrency(v: number) {
@@ -372,7 +372,7 @@ export default function Products() {
                       autoFocus
                     />
                     <Button size="sm" onClick={handleAddCategory} className="shrink-0">Criar</Button>
-                    <Button size="sm" variant="ghost" onClick={() => { setShowNewCatInput(false); setNewCatName(""); }} className="shrink-0">✕</Button>
+                    <Button size="sm" variant="ghost" onClick={() => { setShowNewCatInput(false); setNewCatName(""); }} className="shrink-0"><X className="h-4 w-4" /></Button>
                   </div>
                 ) : (
                   <Select value={formData.category} onValueChange={(v) => {

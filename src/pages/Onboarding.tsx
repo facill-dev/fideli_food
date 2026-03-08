@@ -62,7 +62,7 @@ const Onboarding = () => {
         instagram,
       });
       refreshUser();
-      toast({ title: "Loja criada com sucesso! 🎉" });
+      toast({ title: "Loja criada com sucesso!" });
       navigate("/admin");
     } catch (err: any) {
       toast({ title: "Erro", description: err.message, variant: "destructive" });

@@ -12,7 +12,7 @@ import {
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
-import { Search, ChevronRight } from "lucide-react";
+import { Search, ChevronRight, ClipboardList } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { getOrdersByStore, updateOrderStatus, type TenantOrder } from "@/lib/multiTenantStorage";
 
@@ -107,7 +107,7 @@ export default function Orders() {
       <Card className="border-border/50">
         {orderList.length === 0 ? (
           <CardContent className="text-center py-12">
-            <p className="text-4xl mb-3">📋</p>
+            <ClipboardList className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
             <p className="text-sm text-muted-foreground">Nenhum pedido recebido ainda.</p>
             <p className="text-xs text-muted-foreground mt-1">Os pedidos aparecerão aqui quando clientes comprarem pelo seu cardápio.</p>
           </CardContent>

@@ -238,7 +238,7 @@ export default function Checkout() {
         neighborhood: found.neighborhood,
         city: found.city,
       }));
-      toast.success(`Bem-vinda de volta, ${found.name.split(" ")[0]}! 🎉`);
+      toast.success(`Bem-vinda de volta, ${found.name.split(" ")[0]}!`);
       setStep(1);
     } else {
       toast.info("Não encontramos seus dados. Preencha abaixo!");

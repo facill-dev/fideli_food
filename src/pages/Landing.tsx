@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowRight, Store, Zap, Palette, BarChart3, Smartphone, Globe } from "lucide-react";
+import { ArrowRight, Store, Zap, Palette, BarChart3, Smartphone, Globe, Sparkles } from "lucide-react";
 import { NicheIcon } from "@/components/NicheIcon";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -65,7 +65,7 @@ const Landing = () => {
             transition={{ duration: 0.6 }}
           >
             <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-              ✨ Grátis para começar
+              <Sparkles className="h-4 w-4 inline" /> Grátis para começar
             </span>
             <h1 className="font-display text-4xl md:text-6xl font-bold text-foreground leading-tight max-w-3xl mx-auto">
               Crie seu cardápio digital em{" "}
