@@ -46,9 +46,33 @@ export default function Orders() {
   });
 
   const handleStatusChange = (orderId: string, status: TenantOrder["status"]) => {
+    const order = orderList.find((o) => o.id === orderId);
     updateOrderStatus(orderId, status);
+    if (order) {
+      const STATUS_LABELS: Record<string, string> = {
+        confirmed: "Confirmado",
+        preparing: "Em preparação",
+        ready: "Pronto",
+        delivered: "Entregue",
+        cancelled: "Cancelado",
+      };
+      addNotification({
+        storeId,
+        type: "status_change",
+        title: `Pedido atualizado`,
+        message: `Pedido de ${order.customerName} → ${STATUS_LABELS[status] || status}`,
+        read: false,
+        orderId,
+      });
+    }
     refresh();
     setSelectedOrder(null);
+  };
+
+  const generateWhatsAppLink = (phone: string, order: TenantOrder) => {
+    const clean = phone.replace(/\D/g, "");
+    const summary = `Olá ${order.customerName}! Sobre seu pedido #${order.id.slice(-6).toUpperCase()}:\n\n${order.items.map((i) => `• ${i.qty}x ${i.name}`).join("\n")}\n\nTotal: ${formatCurrency(order.total)}`;
+    return `https://wa.me/55${clean}?text=${encodeURIComponent(summary)}`;
   };
 
   return (
