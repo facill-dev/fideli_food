@@ -13,6 +13,7 @@ import Orders from "./pages/admin/Orders";
 import Products from "./pages/admin/Products";
 import Customers from "./pages/admin/Customers";
 import Events from "./pages/admin/Events";
+import Coupons from "./pages/admin/Coupons";
 
 const queryClient = new QueryClient();
 
