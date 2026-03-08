@@ -83,9 +83,44 @@ export default function Checkout() {
   });
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
+  const [couponError, setCouponError] = useState("");
 
   const deliveryFee = deliveryMethod === "delivery" ? 8.0 : 0;
-  const grandTotal = total + deliveryFee;
+
+  const discount = appliedCoupon
+    ? appliedCoupon.type === "percent"
+      ? Math.round(total * appliedCoupon.value) / 100
+      : appliedCoupon.value
+    : 0;
+
+  const grandTotal = Math.max(0, total + deliveryFee - discount);
+
+  const handleApplyCoupon = () => {
+    const code = couponCode.trim().toUpperCase();
+    if (!code) return;
+    const found = VALID_COUPONS.find((c) => c.code === code);
+    if (!found) {
+      setCouponError("Cupom inválido");
+      setAppliedCoupon(null);
+      return;
+    }
+    if (total < found.minOrder) {
+      setCouponError(`Pedido mínimo de ${formatCurrency(found.minOrder)}`);
+      setAppliedCoupon(null);
+      return;
+    }
+    setAppliedCoupon(found);
+    setCouponError("");
+    toast.success(`Cupom "${found.code}" aplicado! ${found.label}`);
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCode("");
+    setCouponError("");
+  };
 
   // Cross-sell: products not in cart, different categories
   const cartCategoryIds = [...new Set(items.map((i) => i.product.category))];
