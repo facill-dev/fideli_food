@@ -149,7 +149,7 @@ export default function Products() {
         <Card className="border-border/50">
           <CardContent className="p-3 sm:p-4">
             <p className="text-[10px] sm:text-xs text-muted-foreground">Categorias</p>
-            <p className="text-xl sm:text-2xl font-bold font-display text-foreground">{categories.length}</p>
+            <p className="text-xl sm:text-2xl font-bold font-display text-foreground">{categoryList.length}</p>
           </CardContent>
         </Card>
         <Card className="border-border/50">
