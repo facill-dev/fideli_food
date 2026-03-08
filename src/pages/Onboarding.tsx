@@ -9,6 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { createStore, NICHES } from "@/lib/multiTenantStorage";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
+import { ScheduleEditor, DEFAULT_SCHEDULE, formatScheduleSummary, type WeekSchedule } from "@/components/store/ScheduleEditor";
 
 const STEPS = ["Nicho", "Info", "Detalhes"];
 
@@ -24,7 +25,7 @@ const Onboarding = () => {
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
   const [phone, setPhone] = useState("");
-  const [hours, setHours] = useState("");
+  const [schedule, setSchedule] = useState<WeekSchedule>(DEFAULT_SCHEDULE);
   const [instagram, setInstagram] = useState("");
   const [primaryColor, setPrimaryColor] = useState("#d64d7a");
 
@@ -56,7 +57,7 @@ const Onboarding = () => {
         address,
         city,
         phone,
-        hours,
+        hours: JSON.stringify(schedule),
         instagram,
       });
       refreshUser();
@@ -192,15 +193,13 @@ const Onboarding = () => {
                     <Label>Endereço</Label>
                     <Input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Rua, número, bairro" />
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-2">
-                      <Label>Horário</Label>
-                      <Input value={hours} onChange={(e) => setHours(e.target.value)} placeholder="Ter a Sáb · 9h-18h" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Instagram</Label>
-                      <Input value={instagram} onChange={(e) => setInstagram(e.target.value)} placeholder="@sualoja" />
-                    </div>
+                  <div className="space-y-2">
+                    <Label>Horário de funcionamento</Label>
+                    <ScheduleEditor value={schedule} onChange={setSchedule} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Instagram</Label>
+                    <Input value={instagram} onChange={(e) => setInstagram(e.target.value)} placeholder="@sualoja" />
                   </div>
                 </div>
               </motion.div>

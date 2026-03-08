@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { updateStore, NICHES } from "@/lib/multiTenantStorage";
 import { toast } from "sonner";
 import { Save, ExternalLink, Copy } from "lucide-react";
+import { ScheduleEditor, DEFAULT_SCHEDULE, type WeekSchedule } from "@/components/store/ScheduleEditor";
 
 export default function Settings() {
   const { store, refreshUser } = useAuth();
@@ -17,7 +18,9 @@ export default function Settings() {
   const [address, setAddress] = useState(store?.address || "");
   const [city, setCity] = useState(store?.city || "");
   const [phone, setPhone] = useState(store?.phone || "");
-  const [hours, setHours] = useState(store?.hours || "");
+  const [schedule, setSchedule] = useState<WeekSchedule>(() => {
+    try { return store?.hours ? JSON.parse(store.hours) : DEFAULT_SCHEDULE; } catch { return DEFAULT_SCHEDULE; }
+  });
   const [instagram, setInstagram] = useState(store?.instagram || "");
   const [primaryColor, setPrimaryColor] = useState(store?.primaryColor || "#d64d7a");
 
@@ -33,7 +36,7 @@ export default function Settings() {
       address,
       city,
       phone,
-      hours,
+      hours: JSON.stringify(schedule),
       instagram,
       primaryColor,
     });
@@ -143,15 +146,14 @@ export default function Settings() {
               <Input value={address} onChange={(e) => setAddress(e.target.value)} />
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-2">
-                <Label className="text-xs">Horário de funcionamento</Label>
-                <Input value={hours} onChange={(e) => setHours(e.target.value)} placeholder="Ter a Sáb · 9h-18h" />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-xs">Instagram</Label>
-                <Input value={instagram} onChange={(e) => setInstagram(e.target.value)} placeholder="@sualoja" />
-              </div>
+            <div className="space-y-2">
+              <Label className="text-xs">Horário de funcionamento</Label>
+              <ScheduleEditor value={schedule} onChange={setSchedule} />
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-xs">Instagram</Label>
+              <Input value={instagram} onChange={(e) => setInstagram(e.target.value)} placeholder="@sualoja" />
             </div>
           </CardContent>
         </Card>

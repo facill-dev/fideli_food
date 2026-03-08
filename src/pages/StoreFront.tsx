@@ -7,6 +7,7 @@ import { MapPin, Clock, Star, ShoppingBag, Plus, Minus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useToast } from "@/hooks/use-toast";
+import { formatScheduleSummary, type WeekSchedule } from "@/components/store/ScheduleEditor";
 
 interface CartEntry {
   product: TenantProduct;
@@ -119,7 +120,9 @@ const StoreFront = () => {
             <div className="flex flex-wrap gap-2">
               {store.hours && (
                 <span className="inline-flex items-center gap-1 text-xs bg-muted px-2 py-1 rounded-full">
-                  <Clock className="h-3 w-3" /> {store.hours}
+                  <Clock className="h-3 w-3" /> {(() => {
+                    try { return formatScheduleSummary(JSON.parse(store.hours) as WeekSchedule); } catch { return store.hours; }
+                  })()}
                 </span>
               )}
               {store.phone && (
