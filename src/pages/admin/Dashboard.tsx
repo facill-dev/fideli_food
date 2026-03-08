@@ -18,7 +18,6 @@ import {
   Package,
   Truck,
   XCircle,
-  AlertCircle,
   ArrowUpRight,
   ArrowDownRight,
 } from "lucide-react";
@@ -73,20 +72,20 @@ function KpiCard({
 }) {
   return (
     <Card className="border-border/50">
-      <CardContent className="p-4 md:p-5">
+      <CardContent className="p-3 sm:p-4 md:p-5">
         <div className="flex items-start justify-between">
-          <div className="space-y-1">
-            <p className="text-xs font-medium text-muted-foreground">{title}</p>
-            <p className="text-xl md:text-2xl font-bold font-display text-foreground">{value}</p>
-            {subtitle && <p className="text-xs text-muted-foreground">{subtitle}</p>}
+          <div className="space-y-0.5 sm:space-y-1 min-w-0">
+            <p className="text-[10px] sm:text-xs font-medium text-muted-foreground truncate">{title}</p>
+            <p className="text-lg sm:text-xl md:text-2xl font-bold font-display text-foreground truncate">{value}</p>
+            {subtitle && <p className="text-[10px] sm:text-xs text-muted-foreground truncate">{subtitle}</p>}
           </div>
-          <div className="flex flex-col items-end gap-1">
-            <div className="p-2 rounded-lg bg-primary/10">
-              <Icon className="h-4 w-4 text-primary" />
+          <div className="flex flex-col items-end gap-1 shrink-0 ml-2">
+            <div className="p-1.5 sm:p-2 rounded-lg bg-primary/10">
+              <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
             </div>
             {trend && trendValue && (
               <span
-                className={`flex items-center text-xs font-medium ${
+                className={`flex items-center text-[10px] sm:text-xs font-medium ${
                   trend === "up" ? "text-green-600" : "text-destructive"
                 }`}
               >
@@ -117,13 +116,13 @@ function StatusCard({
   color: string;
 }) {
   return (
-    <div className="flex items-center gap-3 p-3 rounded-lg bg-card border border-border/50">
-      <div className={`p-2 rounded-md ${color}`}>
-        <Icon className="h-3.5 w-3.5" />
+    <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg bg-card border border-border/50">
+      <div className={`p-1.5 sm:p-2 rounded-md shrink-0 ${color}`}>
+        <Icon className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
       </div>
-      <div>
-        <p className="text-lg font-bold font-display text-foreground">{value}</p>
-        <p className="text-xs text-muted-foreground">{label}</p>
+      <div className="min-w-0">
+        <p className="text-base sm:text-lg font-bold font-display text-foreground">{value}</p>
+        <p className="text-[10px] sm:text-xs text-muted-foreground truncate">{label}</p>
       </div>
     </div>
   );
@@ -133,14 +132,14 @@ export default function Dashboard() {
   const m = dashboardMetrics;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div>
-        <h1 className="text-2xl font-display font-bold text-foreground">Dashboard</h1>
-        <p className="text-sm text-muted-foreground mt-1">Visao geral da operacao</p>
+        <h1 className="text-xl sm:text-2xl font-display font-bold text-foreground">Dashboard</h1>
+        <p className="text-xs sm:text-sm text-muted-foreground mt-1">Visao geral da operacao</p>
       </div>
 
       {/* KPIs */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
         <KpiCard title="Faturamento Hoje" value={formatCurrency(m.revenueToday)} subtitle="18 pedidos" icon={DollarSign} trend="up" trendValue="+12%" />
         <KpiCard title="Faturamento Semana" value={formatCurrency(m.revenueWeek)} subtitle="94 pedidos" icon={TrendingUp} trend="up" trendValue="+8%" />
         <KpiCard title="Faturamento Mes" value={formatCurrency(m.revenueMonth)} subtitle="387 pedidos" icon={DollarSign} trend="up" trendValue="+15%" />
@@ -149,11 +148,11 @@ export default function Dashboard() {
 
       {/* Status dos pedidos */}
       <Card className="border-border/50">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base font-display">Status dos Pedidos</CardTitle>
+        <CardHeader className="pb-2 sm:pb-3 px-3 sm:px-6 pt-3 sm:pt-6">
+          <CardTitle className="text-sm sm:text-base font-display">Status dos Pedidos</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-2">
+        <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-1.5 sm:gap-2">
             <StatusCard label="Aguardando pgto" value={m.pendingPayment} icon={Clock} color="bg-amber-100 text-amber-700" />
             <StatusCard label="Confirmados" value={m.confirmed} icon={CheckCircle2} color="bg-blue-100 text-blue-700" />
             <StatusCard label="Em preparacao" value={m.inProduction} icon={Package} color="bg-purple-100 text-purple-700" />
@@ -165,18 +164,18 @@ export default function Dashboard() {
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
         {/* Faturamento semanal */}
         <Card className="border-border/50">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base font-display">Faturamento Semanal</CardTitle>
+          <CardHeader className="pb-1 sm:pb-2 px-3 sm:px-6 pt-3 sm:pt-6">
+            <CardTitle className="text-sm sm:text-base font-display">Faturamento Semanal</CardTitle>
           </CardHeader>
-          <CardContent>
-            <ChartContainer config={{ revenue: { label: "Faturamento", color: "hsl(340, 70%, 55%)" } }} className="h-[260px]">
+          <CardContent className="px-2 sm:px-6 pb-3 sm:pb-6">
+            <ChartContainer config={{ revenue: { label: "Faturamento", color: "hsl(340, 70%, 55%)" } }} className="h-[200px] sm:h-[260px] w-full">
               <BarChart data={revenueByDay}>
                 <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                <XAxis dataKey="day" className="text-xs" tick={{ fill: "hsl(340, 10%, 45%)" }} />
-                <YAxis tick={{ fill: "hsl(340, 10%, 45%)" }} tickFormatter={(v) => `R$${v / 1000}k`} />
+                <XAxis dataKey="day" className="text-xs" tick={{ fill: "hsl(340, 10%, 45%)", fontSize: 11 }} />
+                <YAxis tick={{ fill: "hsl(340, 10%, 45%)", fontSize: 11 }} tickFormatter={(v) => `${v / 1000}k`} width={35} />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Bar dataKey="revenue" fill="hsl(340, 70%, 55%)" radius={[4, 4, 0, 0]} />
               </BarChart>
@@ -186,11 +185,11 @@ export default function Dashboard() {
 
         {/* Evolucao mensal */}
         <Card className="border-border/50">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base font-display">Evolucao Mensal</CardTitle>
+          <CardHeader className="pb-1 sm:pb-2 px-3 sm:px-6 pt-3 sm:pt-6">
+            <CardTitle className="text-sm sm:text-base font-display">Evolucao Mensal</CardTitle>
           </CardHeader>
-          <CardContent>
-            <ChartContainer config={{ revenue: { label: "Receita", color: "hsl(25, 80%, 55%)" } }} className="h-[260px]">
+          <CardContent className="px-2 sm:px-6 pb-3 sm:pb-6">
+            <ChartContainer config={{ revenue: { label: "Receita", color: "hsl(25, 80%, 55%)" } }} className="h-[200px] sm:h-[260px] w-full">
               <AreaChart data={monthlyRevenue}>
                 <defs>
                   <linearGradient id="gradRevenue" x1="0" y1="0" x2="0" y2="1">
@@ -199,8 +198,8 @@ export default function Dashboard() {
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                <XAxis dataKey="month" tick={{ fill: "hsl(340, 10%, 45%)" }} />
-                <YAxis tick={{ fill: "hsl(340, 10%, 45%)" }} tickFormatter={(v) => `R$${v / 1000}k`} />
+                <XAxis dataKey="month" tick={{ fill: "hsl(340, 10%, 45%)", fontSize: 11 }} />
+                <YAxis tick={{ fill: "hsl(340, 10%, 45%)", fontSize: 11 }} tickFormatter={(v) => `${v / 1000}k`} width={35} />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Area type="monotone" dataKey="revenue" stroke="hsl(25, 80%, 55%)" fill="url(#gradRevenue)" strokeWidth={2} />
               </AreaChart>
@@ -210,17 +209,17 @@ export default function Dashboard() {
 
         {/* Pedidos por horario */}
         <Card className="border-border/50">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base font-display">Pedidos por Horario</CardTitle>
+          <CardHeader className="pb-1 sm:pb-2 px-3 sm:px-6 pt-3 sm:pt-6">
+            <CardTitle className="text-sm sm:text-base font-display">Pedidos por Horario</CardTitle>
           </CardHeader>
-          <CardContent>
-            <ChartContainer config={{ orders: { label: "Pedidos", color: "hsl(350, 80%, 25%)" } }} className="h-[260px]">
+          <CardContent className="px-2 sm:px-6 pb-3 sm:pb-6">
+            <ChartContainer config={{ orders: { label: "Pedidos", color: "hsl(350, 80%, 25%)" } }} className="h-[200px] sm:h-[260px] w-full">
               <LineChart data={ordersByHour}>
                 <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                <XAxis dataKey="hour" tick={{ fill: "hsl(340, 10%, 45%)" }} />
-                <YAxis tick={{ fill: "hsl(340, 10%, 45%)" }} />
+                <XAxis dataKey="hour" tick={{ fill: "hsl(340, 10%, 45%)", fontSize: 11 }} />
+                <YAxis tick={{ fill: "hsl(340, 10%, 45%)", fontSize: 11 }} width={25} />
                 <ChartTooltip content={<ChartTooltipContent />} />
-                <Line type="monotone" dataKey="orders" stroke="hsl(350, 80%, 25%)" strokeWidth={2} dot={{ fill: "hsl(350, 80%, 25%)", r: 4 }} />
+                <Line type="monotone" dataKey="orders" stroke="hsl(350, 80%, 25%)" strokeWidth={2} dot={{ fill: "hsl(350, 80%, 25%)", r: 3 }} />
               </LineChart>
             </ChartContainer>
           </CardContent>
@@ -228,15 +227,15 @@ export default function Dashboard() {
 
         {/* Vendas por categoria */}
         <Card className="border-border/50">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base font-display">Vendas por Categoria</CardTitle>
+          <CardHeader className="pb-1 sm:pb-2 px-3 sm:px-6 pt-3 sm:pt-6">
+            <CardTitle className="text-sm sm:text-base font-display">Vendas por Categoria</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-6">
-              <div className="w-[160px] h-[160px]">
+          <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
+            <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+              <div className="w-[140px] h-[140px] sm:w-[160px] sm:h-[160px] shrink-0">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
-                    <Pie data={salesByCategory} dataKey="value" nameKey="category" cx="50%" cy="50%" outerRadius={70} innerRadius={40}>
+                    <Pie data={salesByCategory} dataKey="value" nameKey="category" cx="50%" cy="50%" outerRadius={60} innerRadius={35}>
                       {salesByCategory.map((_, i) => (
                         <Cell key={i} fill={COLORS[i % COLORS.length]} />
                       ))}
@@ -244,11 +243,11 @@ export default function Dashboard() {
                   </PieChart>
                 </ResponsiveContainer>
               </div>
-              <div className="flex-1 space-y-2">
+              <div className="flex-1 space-y-1.5 sm:space-y-2 w-full">
                 {salesByCategory.map((item, i) => (
-                  <div key={item.category} className="flex items-center justify-between text-sm">
+                  <div key={item.category} className="flex items-center justify-between text-xs sm:text-sm">
                     <div className="flex items-center gap-2">
-                      <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: COLORS[i] }} />
+                      <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full shrink-0" style={{ backgroundColor: COLORS[i] }} />
                       <span className="text-foreground">{item.category}</span>
                     </div>
                     <span className="text-muted-foreground font-medium">{item.percentage}%</span>
@@ -261,21 +260,21 @@ export default function Dashboard() {
       </div>
 
       {/* Top produtos + tipo pedido */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4">
         <Card className="lg:col-span-2 border-border/50">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base font-display">Produtos Mais Vendidos</CardTitle>
+          <CardHeader className="pb-2 sm:pb-3 px-3 sm:px-6 pt-3 sm:pt-6">
+            <CardTitle className="text-sm sm:text-base font-display">Produtos Mais Vendidos</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
+          <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
+            <div className="space-y-2.5 sm:space-y-3">
               {topProducts.map((p, i) => (
-                <div key={p.name} className="flex items-center gap-3">
-                  <span className="text-xs font-bold text-muted-foreground w-5">{i + 1}</span>
+                <div key={p.name} className="flex items-center gap-2 sm:gap-3">
+                  <span className="text-xs font-bold text-muted-foreground w-4 sm:w-5 shrink-0">{i + 1}</span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-foreground truncate">{p.name}</p>
-                    <p className="text-xs text-muted-foreground">{p.sold} unidades vendidas</p>
+                    <p className="text-xs sm:text-sm font-medium text-foreground truncate">{p.name}</p>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground">{p.sold} un.</p>
                   </div>
-                  <span className="text-sm font-bold text-foreground">{formatCurrency(p.revenue)}</span>
+                  <span className="text-xs sm:text-sm font-bold text-foreground shrink-0">{formatCurrency(p.revenue)}</span>
                 </div>
               ))}
             </div>
@@ -283,16 +282,16 @@ export default function Dashboard() {
         </Card>
 
         <Card className="border-border/50">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base font-display">Tipo de Pedido</CardTitle>
+          <CardHeader className="pb-2 sm:pb-3 px-3 sm:px-6 pt-3 sm:pt-6">
+            <CardTitle className="text-sm sm:text-base font-display">Tipo de Pedido</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
+          <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
+            <div className="space-y-3 sm:space-y-4">
               {ordersByType.map((t) => (
                 <div key={t.type}>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm text-foreground">{t.type}</span>
-                    <span className="text-sm font-bold text-foreground">{t.percentage}%</span>
+                    <span className="text-xs sm:text-sm text-foreground">{t.type}</span>
+                    <span className="text-xs sm:text-sm font-bold text-foreground">{t.percentage}%</span>
                   </div>
                   <div className="h-2 bg-muted rounded-full overflow-hidden">
                     <div
@@ -303,18 +302,18 @@ export default function Dashboard() {
                       }}
                     />
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">{t.value} pedidos</p>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">{t.value} pedidos</p>
                 </div>
               ))}
 
               <div className="pt-3 border-t border-border">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">Eventos ativos</span>
-                  <span className="text-sm font-bold text-foreground">{m.activeEvents}</span>
+                  <span className="text-[10px] sm:text-xs text-muted-foreground">Eventos ativos</span>
+                  <span className="text-xs sm:text-sm font-bold text-foreground">{m.activeEvents}</span>
                 </div>
                 <div className="flex items-center justify-between mt-1">
-                  <span className="text-xs text-muted-foreground">Produtos esgotados</span>
-                  <span className="text-sm font-bold text-destructive">{m.soldOutProducts}</span>
+                  <span className="text-[10px] sm:text-xs text-muted-foreground">Produtos esgotados</span>
+                  <span className="text-xs sm:text-sm font-bold text-destructive">{m.soldOutProducts}</span>
                 </div>
               </div>
             </div>
