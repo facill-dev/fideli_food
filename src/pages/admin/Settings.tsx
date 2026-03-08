@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { updateStore, NICHES } from "@/lib/multiTenantStorage";
 import { toast } from "sonner";
 import { Save, ExternalLink, Copy } from "lucide-react";
+import { NicheIcon } from "@/components/NicheIcon";
 import { ScheduleEditor, DEFAULT_SCHEDULE, type WeekSchedule } from "@/components/store/ScheduleEditor";
 
 export default function Settings() {
