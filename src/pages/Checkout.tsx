@@ -36,6 +36,21 @@ function formatCurrency(v: number) {
 type DeliveryMethod = "delivery" | "pickup";
 type PaymentMethod = "pix" | "card" | "cash";
 
+interface Coupon {
+  code: string;
+  type: "percent" | "fixed";
+  value: number;
+  minOrder: number;
+  label: string;
+}
+
+const VALID_COUPONS: Coupon[] = [
+  { code: "DOCE10", type: "percent", value: 10, minOrder: 30, label: "10% de desconto" },
+  { code: "PRIMEIRACOMPRA", type: "percent", value: 15, minOrder: 0, label: "15% de desconto" },
+  { code: "FRETE", type: "fixed", value: 8, minOrder: 50, label: "Frete grátis" },
+  { code: "ECONOMIA5", type: "fixed", value: 5, minOrder: 20, label: "R$ 5 de desconto" },
+];
+
 interface FormData {
   name: string;
   phone: string;
