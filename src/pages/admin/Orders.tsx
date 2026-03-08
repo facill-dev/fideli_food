@@ -280,7 +280,7 @@ function OrderDetailDialog({ order, onClose }: { order: Order | null; onClose: (
               <p className="text-foreground">{order.notes}</p>
             </div>
           )}
-          <div className="flex gap-2 pt-2">
+          <div className="flex flex-col sm:flex-row gap-2 pt-2">
             <Button size="sm" className="flex-1">Confirmar</Button>
             <Button size="sm" variant="outline" className="flex-1">Em preparacao</Button>
             <Button size="sm" variant="outline" className="flex-1">Pronto</Button>
