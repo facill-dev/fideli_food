@@ -120,7 +120,7 @@ const CartDrawer = () => {
                   </span>
                 </div>
               </div>
-              <Button variant="hero" size="lg" className="w-full gap-2">
+              <Button variant="hero" size="lg" className="w-full gap-2" onClick={() => { setIsOpen(false); navigate("/checkout"); }}>
                 Finalizar pedido
                 <ChevronRight className="h-4 w-4" />
               </Button>
