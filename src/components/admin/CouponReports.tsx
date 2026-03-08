@@ -1,6 +1,7 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { getCouponAnalytics, getAggregatedDailyUsage } from "@/data/couponsData";
 import {
   BarChart, Bar, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend,
@@ -25,8 +26,9 @@ const COLORS = [
 ];
 
 export default function CouponReports() {
-  const analytics = useMemo(() => getCouponAnalytics(), []);
-  const dailyAgg = useMemo(() => getAggregatedDailyUsage(), []);
+  const [days, setDays] = useState(14);
+  const analytics = useMemo(() => getCouponAnalytics(days), [days]);
+  const dailyAgg = useMemo(() => getAggregatedDailyUsage(days), [days]);
 
   const totalUses = analytics.reduce((s, a) => s + a.totalUses, 0);
   const totalRevenue = analytics.reduce((s, a) => s + a.totalRevenue, 0);
@@ -47,13 +49,23 @@ export default function CouponReports() {
 
   return (
     <div className="space-y-4 sm:space-y-6">
+      {/* Period selector */}
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-sm font-medium text-muted-foreground">Período</p>
+        <ToggleGroup type="single" value={String(days)} onValueChange={(v) => v && setDays(Number(v))} className="bg-muted rounded-lg p-0.5">
+          <ToggleGroupItem value="7" className="text-xs px-3 h-7 data-[state=on]:bg-card data-[state=on]:shadow-sm rounded-md">7 dias</ToggleGroupItem>
+          <ToggleGroupItem value="14" className="text-xs px-3 h-7 data-[state=on]:bg-card data-[state=on]:shadow-sm rounded-md">14 dias</ToggleGroupItem>
+          <ToggleGroupItem value="30" className="text-xs px-3 h-7 data-[state=on]:bg-card data-[state=on]:shadow-sm rounded-md">30 dias</ToggleGroupItem>
+        </ToggleGroup>
+      </div>
+
       {/* KPI Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
         <Card className="border-border/50">
           <CardContent className="p-3 sm:p-4">
             <div className="flex items-center gap-1.5 mb-1">
               <Tag className="h-3.5 w-3.5 text-primary" />
-              <p className="text-[10px] sm:text-xs text-muted-foreground">Usos (14 dias)</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Usos ({days} dias)</p>
             </div>
             <p className="text-xl sm:text-2xl font-bold font-display text-foreground">{totalUses}</p>
           </CardContent>
@@ -138,7 +150,7 @@ export default function CouponReports() {
       {/* Revenue vs Discount area chart */}
       <Card className="border-border/50">
         <CardHeader className="pb-2 px-3 sm:px-6 pt-3 sm:pt-6">
-          <CardTitle className="text-sm font-display font-semibold text-foreground">Receita vs Desconto (14 dias)</CardTitle>
+          <CardTitle className="text-sm font-display font-semibold text-foreground">Receita vs Desconto ({days} dias)</CardTitle>
         </CardHeader>
         <CardContent className="px-1 sm:px-4 pb-3">
           <ResponsiveContainer width="100%" height={200}>

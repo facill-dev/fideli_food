@@ -63,10 +63,10 @@ export interface CouponStats {
   dailyUsage: CouponUsageDay[];
 }
 
-export function getCouponAnalytics(): CouponStats[] {
-  const last14Days = Array.from({ length: 14 }, (_, i) => {
+export function getCouponAnalytics(days = 14): CouponStats[] {
+  const dates = Array.from({ length: days }, (_, i) => {
     const d = new Date();
-    d.setDate(d.getDate() - (13 - i));
+    d.setDate(d.getDate() - (days - 1 - i));
     return d.toISOString().split("T")[0];
   });
 
@@ -75,7 +75,7 @@ export function getCouponAnalytics(): CouponStats[] {
     const avgOrder = c.type === "percent" ? 85 + Math.random() * 40 : 55 + Math.random() * 30;
     const avgDisc = c.type === "percent" ? avgOrder * (c.value / 100) : c.value;
 
-    const dailyUsage: CouponUsageDay[] = last14Days.map((date) => {
+    const dailyUsage: CouponUsageDay[] = dates.map((date) => {
       const uses = c.active ? Math.floor(Math.random() * 6) + 1 : Math.floor(Math.random() * 2);
       return {
         date,
@@ -102,8 +102,8 @@ export function getCouponAnalytics(): CouponStats[] {
   });
 }
 
-export function getAggregatedDailyUsage() {
-  const analytics = getCouponAnalytics();
+export function getAggregatedDailyUsage(days = 14) {
+  const analytics = getCouponAnalytics(days);
   const dayMap: Record<string, { date: string; uses: number; revenue: number; discount: number }> = {};
 
   for (const stat of analytics) {
