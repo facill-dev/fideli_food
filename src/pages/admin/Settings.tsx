@@ -36,7 +36,7 @@ export default function Settings() {
       address,
       city,
       phone,
-      hours,
+      hours: JSON.stringify(schedule),
       instagram,
       primaryColor,
     });
