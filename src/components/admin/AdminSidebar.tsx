@@ -84,7 +84,7 @@ export default function AdminSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarGroup defaultOpen>
+        <SidebarGroup>
           <SidebarGroupLabel className="text-xs uppercase tracking-wider text-muted-foreground px-4">
             Operacao
           </SidebarGroupLabel>
