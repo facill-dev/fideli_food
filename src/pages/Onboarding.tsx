@@ -57,7 +57,7 @@ const Onboarding = () => {
         address,
         city,
         phone,
-        hours,
+        hours: JSON.stringify(schedule),
         instagram,
       });
       refreshUser();
