@@ -4,11 +4,10 @@ import {
   ClipboardList,
   Users,
   Calendar,
-  Truck,
-  BarChart3,
   Settings,
   Store,
   Tag,
+  ExternalLink,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -25,8 +24,9 @@ import {
   SidebarFooter,
   useSidebar,
 } from "@/components/ui/sidebar";
-import logo from "@/assets/logo.jpg";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useAuth } from "@/contexts/AuthContext";
+import { NICHES } from "@/lib/multiTenantStorage";
 
 const mainItems = [
   { title: "Dashboard", url: "/admin", icon: LayoutDashboard },
@@ -38,9 +38,7 @@ const mainItems = [
 ];
 
 const operationItems = [
-  { title: "Entregas", url: "/admin/entregas", icon: Truck },
-  { title: "Relatorios", url: "/admin/relatorios", icon: BarChart3 },
-  { title: "Configuracoes", url: "/admin/configuracoes", icon: Settings },
+  { title: "Configurações", url: "/admin/configuracoes", icon: Settings },
 ];
 
 export default function AdminSidebar() {
@@ -48,6 +46,9 @@ export default function AdminSidebar() {
   const collapsed = state === "collapsed";
   const location = useLocation();
   const isMobile = useIsMobile();
+  const { store } = useAuth();
+  const niche = NICHES.find((n) => n.id === store?.niche);
+
   const isActive = (path: string) =>
     path === "/admin" ? location.pathname === "/admin" : location.pathname.startsWith(path);
 
@@ -61,9 +62,13 @@ export default function AdminSidebar() {
     <Sidebar collapsible={isMobile ? "offcanvas" : "icon"} className="border-r border-border">
       <SidebarHeader className="p-4">
         <a href="/admin" className="flex items-center gap-3">
-          <img src={logo} alt="Logo" className="w-8 h-8 rounded-lg object-cover shrink-0" />
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center text-lg shrink-0 bg-primary/10">
+            {niche?.icon || "🏪"}
+          </div>
           {(!collapsed || isMobile) && (
-            <span className="font-display font-bold text-base text-foreground">Painel Admin</span>
+            <span className="font-display font-bold text-base text-foreground truncate">
+              {store?.name || "Painel Admin"}
+            </span>
           )}
         </a>
       </SidebarHeader>
@@ -97,7 +102,7 @@ export default function AdminSidebar() {
 
         <SidebarGroup>
           <SidebarGroupLabel className="text-xs uppercase tracking-wider text-muted-foreground px-4">
-            Operacao
+            Operação
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -122,13 +127,17 @@ export default function AdminSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="p-4">
-        <a
-          href="/"
-          className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <Store className="h-4 w-4" />
-          {(!collapsed || isMobile) && <span>Ver loja</span>}
-        </a>
+        {store && (
+          <a
+            href={`/loja/${store.slug}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ExternalLink className="h-4 w-4" />
+            {(!collapsed || isMobile) && <span>Ver minha loja</span>}
+          </a>
+        )}
       </SidebarFooter>
     </Sidebar>
   );
