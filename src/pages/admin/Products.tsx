@@ -336,16 +336,39 @@ export default function Products() {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label className="text-xs">Categoria *</Label>
-                <Select value={formData.category} onValueChange={(v) => updateForm("category", v)}>
-                  <SelectTrigger className="mt-1">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((c) => (
-                      <SelectItem key={c.slug} value={c.slug}>{c.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                {showNewCatInput ? (
+                  <div className="flex gap-2 mt-1">
+                    <Input
+                      value={newCatName}
+                      onChange={(e) => setNewCatName(e.target.value)}
+                      placeholder="Nome da categoria"
+                      onKeyDown={(e) => e.key === "Enter" && handleAddCategory()}
+                      autoFocus
+                    />
+                    <Button size="sm" onClick={handleAddCategory} className="shrink-0">Criar</Button>
+                    <Button size="sm" variant="ghost" onClick={() => { setShowNewCatInput(false); setNewCatName(""); }} className="shrink-0">✕</Button>
+                  </div>
+                ) : (
+                  <Select value={formData.category} onValueChange={(v) => {
+                    if (v === "__new__") {
+                      setShowNewCatInput(true);
+                    } else {
+                      updateForm("category", v);
+                    }
+                  }}>
+                    <SelectTrigger className="mt-1">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categoryList.map((c) => (
+                        <SelectItem key={c.slug} value={c.slug}>{c.name}</SelectItem>
+                      ))}
+                      <SelectItem value="__new__" className="text-primary font-medium">
+                        + Nova categoria
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
               </div>
               <div>
                 <Label className="text-xs">Estoque</Label>
