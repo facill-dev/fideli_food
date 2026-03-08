@@ -9,6 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { createStore, NICHES } from "@/lib/multiTenantStorage";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
+import { NicheIcon } from "@/components/NicheIcon";
 import { ScheduleEditor, DEFAULT_SCHEDULE, formatScheduleSummary, type WeekSchedule } from "@/components/store/ScheduleEditor";
 
 const STEPS = ["Nicho", "Info", "Detalhes"];
