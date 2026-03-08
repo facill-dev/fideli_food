@@ -420,8 +420,53 @@ export default function Products() {
             </div>
 
             <div>
-              <Label className="text-xs">URL da imagem</Label>
-              <Input value={formData.image} onChange={(e) => updateForm("image", e.target.value)} placeholder="/placeholder.svg" className="mt-1" />
+              <Label className="text-xs">Imagem do produto</Label>
+              <div className="mt-1 flex items-center gap-3">
+                <img
+                  src={formData.image}
+                  alt="Preview"
+                  className="w-14 h-14 rounded-lg object-cover border border-border/50 shrink-0 bg-muted"
+                />
+                <div className="flex-1">
+                  <label className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-md border border-border bg-background text-sm hover:bg-accent transition-colors">
+                    📷 Escolher imagem
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        if (file.size > 2 * 1024 * 1024) {
+                          toast.error("Imagem muito grande. Máximo 2MB.");
+                          return;
+                        }
+                        // Compress to max 400x400 thumbnail
+                        const img = new Image();
+                        const url = URL.createObjectURL(file);
+                        img.onload = () => {
+                          const MAX = 400;
+                          let w = img.width, h = img.height;
+                          if (w > MAX || h > MAX) {
+                            const ratio = Math.min(MAX / w, MAX / h);
+                            w = Math.round(w * ratio);
+                            h = Math.round(h * ratio);
+                          }
+                          const canvas = document.createElement("canvas");
+                          canvas.width = w;
+                          canvas.height = h;
+                          canvas.getContext("2d")!.drawImage(img, 0, 0, w, h);
+                          const dataUrl = canvas.toDataURL("image/webp", 0.75);
+                          URL.revokeObjectURL(url);
+                          updateForm("image", dataUrl);
+                        };
+                        img.src = url;
+                      }}
+                    />
+                  </label>
+                  <p className="text-[10px] text-muted-foreground mt-1">JPG, PNG ou WebP · Máx 2MB · Reduzida para 400×400</p>
+                </div>
+              </div>
             </div>
 
             <div className="flex flex-wrap gap-6">
