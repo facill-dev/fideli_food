@@ -45,6 +45,7 @@ const App = () => (
 
               {/* Dynamic storefront */}
               <Route path="/loja/:slug" element={<StoreFront />} />
+              <Route path="/pedido/:orderId" element={<OrderTracking />} />
               <Route path="/checkout" element={<Checkout />} />
 
               {/* Admin (multi-tenant) */}

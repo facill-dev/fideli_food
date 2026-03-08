@@ -263,6 +263,22 @@ export default function Orders() {
                     <Button size="sm" variant="outline" className="flex-1" onClick={() => handleStatusChange(selectedOrder.id, "delivered")}>Entregue</Button>
                   )}
                 </div>
+                <div className="flex gap-2 pt-1">
+                  {selectedOrder.customerPhone && (
+                    <Button size="sm" variant="outline" className="flex-1 gap-1.5 text-[hsl(142,72%,29%)] border-[hsl(142,72%,29%)]/30 hover:bg-[hsl(142,72%,24%)]/10" asChild>
+                      <a href={generateWhatsAppLink(selectedOrder.customerPhone, selectedOrder)} target="_blank" rel="noopener noreferrer">
+                        <MessageCircle className="h-4 w-4" />
+                        WhatsApp
+                      </a>
+                    </Button>
+                  )}
+                  <Button size="sm" variant="outline" className="flex-1 gap-1.5" asChild>
+                    <a href={`/pedido/${selectedOrder.id}`} target="_blank" rel="noopener noreferrer">
+                      <ExternalLink className="h-4 w-4" />
+                      Link do pedido
+                    </a>
+                  </Button>
+                </div>
               </div>
             </>
           )}
