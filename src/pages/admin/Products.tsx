@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { products as initialProducts, categories, type Product } from "@/data/mockData";
+import { products as initialProducts, categories as initialCategories, type Product, type Category } from "@/data/mockData";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
@@ -42,9 +42,28 @@ export default function Products() {
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [productList, setProductList] = useState<Product[]>(initialProducts);
+  const [categoryList, setCategoryList] = useState<Category[]>(initialCategories);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [formData, setFormData] = useState<Omit<Product, "id">>(emptyProduct);
+  const [newCatName, setNewCatName] = useState("");
+  const [showNewCatInput, setShowNewCatInput] = useState(false);
+
+  const handleAddCategory = () => {
+    const name = newCatName.trim();
+    if (!name) return;
+    const slug = name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "-");
+    if (categoryList.some((c) => c.slug === slug)) {
+      toast.error("Categoria já existe");
+      return;
+    }
+    const newCat: Category = { id: crypto.randomUUID(), name, image: "/placeholder.svg", slug };
+    setCategoryList((prev) => [...prev, newCat]);
+    updateForm("category", slug);
+    setNewCatName("");
+    setShowNewCatInput(false);
+    toast.success(`Categoria "${name}" criada!`);
+  };
 
   const filtered = productList.filter((p) => {
     const matchSearch = p.name.toLowerCase().includes(search.toLowerCase());
@@ -130,7 +149,7 @@ export default function Products() {
         <Card className="border-border/50">
           <CardContent className="p-3 sm:p-4">
             <p className="text-[10px] sm:text-xs text-muted-foreground">Categorias</p>
-            <p className="text-xl sm:text-2xl font-bold font-display text-foreground">{categories.length}</p>
+            <p className="text-xl sm:text-2xl font-bold font-display text-foreground">{categoryList.length}</p>
           </CardContent>
         </Card>
         <Card className="border-border/50">
@@ -161,7 +180,7 @@ export default function Products() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todas</SelectItem>
-                {categories.map((c) => (
+                {categoryList.map((c) => (
                   <SelectItem key={c.slug} value={c.slug}>{c.name}</SelectItem>
                 ))}
               </SelectContent>
@@ -317,16 +336,39 @@ export default function Products() {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label className="text-xs">Categoria *</Label>
-                <Select value={formData.category} onValueChange={(v) => updateForm("category", v)}>
-                  <SelectTrigger className="mt-1">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((c) => (
-                      <SelectItem key={c.slug} value={c.slug}>{c.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                {showNewCatInput ? (
+                  <div className="flex gap-2 mt-1">
+                    <Input
+                      value={newCatName}
+                      onChange={(e) => setNewCatName(e.target.value)}
+                      placeholder="Nome da categoria"
+                      onKeyDown={(e) => e.key === "Enter" && handleAddCategory()}
+                      autoFocus
+                    />
+                    <Button size="sm" onClick={handleAddCategory} className="shrink-0">Criar</Button>
+                    <Button size="sm" variant="ghost" onClick={() => { setShowNewCatInput(false); setNewCatName(""); }} className="shrink-0">✕</Button>
+                  </div>
+                ) : (
+                  <Select value={formData.category} onValueChange={(v) => {
+                    if (v === "__new__") {
+                      setShowNewCatInput(true);
+                    } else {
+                      updateForm("category", v);
+                    }
+                  }}>
+                    <SelectTrigger className="mt-1">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categoryList.map((c) => (
+                        <SelectItem key={c.slug} value={c.slug}>{c.name}</SelectItem>
+                      ))}
+                      <SelectItem value="__new__" className="text-primary font-medium">
+                        + Nova categoria
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
               </div>
               <div>
                 <Label className="text-xs">Estoque</Label>
