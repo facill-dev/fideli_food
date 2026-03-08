@@ -42,9 +42,28 @@ export default function Products() {
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [productList, setProductList] = useState<Product[]>(initialProducts);
+  const [categoryList, setCategoryList] = useState<Category[]>(initialCategories);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [formData, setFormData] = useState<Omit<Product, "id">>(emptyProduct);
+  const [newCatName, setNewCatName] = useState("");
+  const [showNewCatInput, setShowNewCatInput] = useState(false);
+
+  const handleAddCategory = () => {
+    const name = newCatName.trim();
+    if (!name) return;
+    const slug = name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "-");
+    if (categoryList.some((c) => c.slug === slug)) {
+      toast.error("Categoria já existe");
+      return;
+    }
+    const newCat: Category = { id: crypto.randomUUID(), name, image: "/placeholder.svg", slug };
+    setCategoryList((prev) => [...prev, newCat]);
+    updateForm("category", slug);
+    setNewCatName("");
+    setShowNewCatInput(false);
+    toast.success(`Categoria "${name}" criada!`);
+  };
 
   const filtered = productList.filter((p) => {
     const matchSearch = p.name.toLowerCase().includes(search.toLowerCase());
