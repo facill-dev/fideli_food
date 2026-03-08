@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const CartDrawer = () => {
   const { items, isOpen, setIsOpen, total, updateQty, removeItem, itemCount } = useCart();
+  const navigate = useNavigate();
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
