@@ -63,10 +63,10 @@ export interface CouponStats {
   dailyUsage: CouponUsageDay[];
 }
 
-export function getCouponAnalytics(): CouponStats[] {
-  const last14Days = Array.from({ length: 14 }, (_, i) => {
+export function getCouponAnalytics(days = 14): CouponStats[] {
+  const dates = Array.from({ length: days }, (_, i) => {
     const d = new Date();
-    d.setDate(d.getDate() - (13 - i));
+    d.setDate(d.getDate() - (days - 1 - i));
     return d.toISOString().split("T")[0];
   });
 
