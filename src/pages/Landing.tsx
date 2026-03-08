@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowRight, Store, Zap, Palette, BarChart3, Smartphone, Globe } from "lucide-react";
+import { ArrowRight, Store, Zap, Palette, BarChart3, Smartphone, Globe, Sparkles } from "lucide-react";
 import { NicheIcon } from "@/components/NicheIcon";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
