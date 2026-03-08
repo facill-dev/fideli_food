@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
@@ -6,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const CartDrawer = () => {
   const { items, isOpen, setIsOpen, total, updateQty, removeItem, itemCount } = useCart();
+  const navigate = useNavigate();
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -118,7 +120,7 @@ const CartDrawer = () => {
                   </span>
                 </div>
               </div>
-              <Button variant="hero" size="lg" className="w-full gap-2">
+              <Button variant="hero" size="lg" className="w-full gap-2" onClick={() => { setIsOpen(false); navigate("/checkout"); }}>
                 Finalizar pedido
                 <ChevronRight className="h-4 w-4" />
               </Button>
