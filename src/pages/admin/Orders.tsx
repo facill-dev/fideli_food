@@ -12,9 +12,9 @@ import {
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
-import { Search, ChevronRight, ClipboardList } from "lucide-react";
+import { Search, ChevronRight, ClipboardList, MessageCircle, ExternalLink } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { getOrdersByStore, updateOrderStatus, type TenantOrder } from "@/lib/multiTenantStorage";
+import { getOrdersByStore, updateOrderStatus, addNotification, type TenantOrder } from "@/lib/multiTenantStorage";
 
 const STATUS_MAP: Record<TenantOrder["status"], { label: string; className: string }> = {
   pending: { label: "Pendente", className: "bg-amber-100 text-amber-800 border-amber-200" },
