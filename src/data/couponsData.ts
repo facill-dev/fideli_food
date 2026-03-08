@@ -75,7 +75,7 @@ export function getCouponAnalytics(days = 14): CouponStats[] {
     const avgOrder = c.type === "percent" ? 85 + Math.random() * 40 : 55 + Math.random() * 30;
     const avgDisc = c.type === "percent" ? avgOrder * (c.value / 100) : c.value;
 
-    const dailyUsage: CouponUsageDay[] = last14Days.map((date) => {
+    const dailyUsage: CouponUsageDay[] = dates.map((date) => {
       const uses = c.active ? Math.floor(Math.random() * 6) + 1 : Math.floor(Math.random() * 2);
       return {
         date,
