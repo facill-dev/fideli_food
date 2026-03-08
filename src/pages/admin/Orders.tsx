@@ -209,7 +209,7 @@ function OrderDetailDialog({ order, onClose }: { order: Order | null; onClose: (
   if (!order) return null;
   return (
     <Dialog open={!!order} onOpenChange={onClose}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="font-display flex items-center gap-2">
             Pedido {order.number}
@@ -280,7 +280,7 @@ function OrderDetailDialog({ order, onClose }: { order: Order | null; onClose: (
               <p className="text-foreground">{order.notes}</p>
             </div>
           )}
-          <div className="flex gap-2 pt-2">
+          <div className="flex flex-col sm:flex-row gap-2 pt-2">
             <Button size="sm" className="flex-1">Confirmar</Button>
             <Button size="sm" variant="outline" className="flex-1">Em preparacao</Button>
             <Button size="sm" variant="outline" className="flex-1">Pronto</Button>
@@ -350,23 +350,25 @@ export default function Orders() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-display font-bold text-foreground">Pedidos</h1>
-          <p className="text-sm text-muted-foreground mt-1">Gerencie todos os pedidos da confeitaria</p>
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex items-center justify-between gap-2">
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl font-display font-bold text-foreground">Pedidos</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1 hidden sm:block">Gerencie todos os pedidos da confeitaria</p>
         </div>
-        <div className="flex items-center gap-1 bg-muted rounded-lg p-1">
-          <Button variant={view === "list" ? "default" : "ghost"} size="sm" className="h-8 px-3" onClick={() => setView("list")}>
-            <LayoutList className="h-4 w-4 mr-1" /> Lista
+        <div className="flex items-center gap-1 bg-muted rounded-lg p-1 shrink-0">
+          <Button variant={view === "list" ? "default" : "ghost"} size="sm" className="h-8 px-2 sm:px-3" onClick={() => setView("list")}>
+            <LayoutList className="h-4 w-4 sm:mr-1" />
+            <span className="hidden sm:inline">Lista</span>
           </Button>
-          <Button variant={view === "kanban" ? "default" : "ghost"} size="sm" className="h-8 px-3" onClick={() => setView("kanban")}>
-            <Columns3 className="h-4 w-4 mr-1" /> Kanban
+          <Button variant={view === "kanban" ? "default" : "ghost"} size="sm" className="h-8 px-2 sm:px-3" onClick={() => setView("kanban")}>
+            <Columns3 className="h-4 w-4 sm:mr-1" />
+            <span className="hidden sm:inline">Kanban</span>
           </Button>
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input placeholder="Buscar por nome, numero ou telefone..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
@@ -374,7 +376,7 @@ export default function Orders() {
         <div className="flex gap-2">
           {view === "list" && (
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[160px]"><SelectValue placeholder="Status" /></SelectTrigger>
+              <SelectTrigger className="w-full sm:w-[160px]"><SelectValue placeholder="Status" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todos os status</SelectItem>
                 {Object.entries(STATUS_MAP).map(([k, v]) => (
@@ -384,7 +386,7 @@ export default function Orders() {
             </Select>
           )}
           <Select value={typeFilter} onValueChange={setTypeFilter}>
-            <SelectTrigger className="w-[130px]"><SelectValue placeholder="Tipo" /></SelectTrigger>
+            <SelectTrigger className="w-full sm:w-[130px]"><SelectValue placeholder="Tipo" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todos</SelectItem>
               <SelectItem value="retirada">Retirada</SelectItem>
@@ -403,8 +405,8 @@ export default function Orders() {
           onDragOver={handleDragOver}
           onDragEnd={handleDragEnd}
         >
-          <div className="overflow-x-auto pb-4 -mx-4 md:-mx-6 px-4 md:px-6">
-            <div className="flex gap-3 min-w-[900px]">
+          <div className="overflow-x-auto pb-4 -mx-3 sm:-mx-4 md:-mx-6 px-3 sm:px-4 md:px-6 -webkit-overflow-scrolling-touch">
+            <div className="flex gap-2 sm:gap-3 min-w-[800px]">
               {KANBAN_COLUMNS.map((col) => {
                 const columnOrders = filtered.filter((o) =>
                   col.status === "retirado"
