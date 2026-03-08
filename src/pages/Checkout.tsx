@@ -87,7 +87,7 @@ export default function Checkout() {
   const handleApplyCoupon = () => {
     const code = couponCode.trim().toUpperCase();
     if (!code) return;
-    const found = VALID_COUPONS.find((c) => c.code === code);
+    const found = getActiveCoupons().find((c) => c.code === code);
     if (!found) {
       setCouponError("Cupom inválido");
       setAppliedCoupon(null);
