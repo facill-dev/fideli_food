@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { products } from "@/data/mockData";
@@ -25,9 +25,13 @@ import {
   Sparkles,
   Tag,
   X,
+  Search,
+  UserCheck,
+  UserPlus,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
+import { saveCustomerData, getCustomerData, findCustomerByIdentifier } from "@/lib/customerStorage";
 
 function formatCurrency(v: number) {
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
@@ -68,11 +72,33 @@ export default function Checkout() {
     notes: "",
     changeFor: "",
   });
-  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [step, setStep] = useState<0 | 1 | 2 | 3>(0);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
   const [couponError, setCouponError] = useState("");
+  const [lookupValue, setLookupValue] = useState("");
+  const [lookupDone, setLookupDone] = useState(false);
+
+  // Auto-fill from localStorage on mount
+  useEffect(() => {
+    const saved = getCustomerData();
+    if (saved) {
+      setForm((prev) => ({
+        ...prev,
+        name: saved.name || prev.name,
+        phone: saved.phone || prev.phone,
+        cpf: saved.cpf || prev.cpf,
+        address: saved.address || prev.address,
+        number: saved.number || prev.number,
+        complement: saved.complement || prev.complement,
+        neighborhood: saved.neighborhood || prev.neighborhood,
+        city: saved.city || prev.city,
+      }));
+      // Skip identification step if we already have data
+      setStep(1);
+    }
+  }, []);
 
   const deliveryFee = deliveryMethod === "delivery" ? 8.0 : 0;
 
@@ -177,8 +203,51 @@ export default function Checkout() {
   };
 
   const handlePlaceOrder = () => {
+    // Save customer data to localStorage
+    saveCustomerData({
+      name: form.name,
+      phone: form.phone,
+      cpf: form.cpf,
+      address: form.address,
+      number: form.number,
+      complement: form.complement,
+      neighborhood: form.neighborhood,
+      city: form.city,
+    });
     setOrderPlaced(true);
     toast.success("Pedido realizado com sucesso!");
+  };
+
+  const handleLookup = () => {
+    const identifier = lookupValue.trim();
+    if (!identifier) {
+      toast.error("Digite seu WhatsApp ou CPF");
+      return;
+    }
+    const found = findCustomerByIdentifier(identifier);
+    setLookupDone(true);
+    if (found) {
+      setForm((prev) => ({
+        ...prev,
+        name: found.name,
+        phone: found.phone,
+        cpf: found.cpf,
+        address: found.address,
+        number: found.number,
+        complement: found.complement,
+        neighborhood: found.neighborhood,
+        city: found.city,
+      }));
+      toast.success(`Bem-vinda de volta, ${found.name.split(" ")[0]}! 🎉`);
+      setStep(1);
+    } else {
+      toast.info("Não encontramos seus dados. Preencha abaixo!");
+      setStep(1);
+    }
+  };
+
+  const handleSkipLookup = () => {
+    setStep(1);
   };
 
   if (items.length === 0 && !orderPlaced) {
@@ -223,31 +292,85 @@ export default function Checkout() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-30 bg-card border-b border-border">
-        <div className="max-w-2xl mx-auto flex items-center gap-3 px-4 py-3">
-          <button onClick={() => (step === 1 ? navigate(-1) : setStep((s) => (s - 1) as 1 | 2 | 3))} className="p-1 hover:bg-muted rounded-lg transition-colors">
-            <ArrowLeft className="h-5 w-5 text-foreground" />
-          </button>
-          <h1 className="text-base font-display font-bold text-foreground">Finalizar pedido</h1>
-        </div>
-
-        {/* Step indicator */}
-        <div className="max-w-2xl mx-auto px-4 pb-3">
-          <div className="flex gap-2">
-            {[1, 2, 3].map((s) => (
-              <div key={s} className="flex-1">
-                <div className={`h-1 rounded-full transition-colors ${s <= step ? "bg-primary" : "bg-muted"}`} />
-                <p className={`text-[10px] mt-1 ${s <= step ? "text-primary font-medium" : "text-muted-foreground"}`}>
-                  {stepLabels[s - 1]}
-                </p>
-              </div>
-            ))}
+      {step >= 1 && (
+        <header className="sticky top-0 z-30 bg-card border-b border-border">
+          <div className="max-w-2xl mx-auto flex items-center gap-3 px-4 py-3">
+            <button
+              onClick={() => (step === 1 ? setStep(0) : setStep((s) => (s - 1) as 0 | 1 | 2 | 3))}
+              className="p-1 hover:bg-muted rounded-lg transition-colors"
+            >
+              <ArrowLeft className="h-5 w-5 text-foreground" />
+            </button>
+            <h1 className="text-base font-display font-bold text-foreground">Finalizar pedido</h1>
           </div>
-        </div>
-      </header>
+
+          {/* Step indicator */}
+          <div className="max-w-2xl mx-auto px-4 pb-3">
+            <div className="flex gap-2">
+              {[1, 2, 3].map((s) => (
+                <div key={s} className="flex-1">
+                  <div className={`h-1 rounded-full transition-colors ${s <= step ? "bg-primary" : "bg-muted"}`} />
+                  <p className={`text-[10px] mt-1 ${s <= step ? "text-primary font-medium" : "text-muted-foreground"}`}>
+                    {stepLabels[s - 1]}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </header>
+      )}
 
       <div className="max-w-2xl mx-auto px-4 py-4 pb-32">
         <AnimatePresence mode="wait">
+          {/* Step 0: Identification */}
+          {step === 0 && (
+            <motion.div
+              key="step0"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="flex flex-col items-center justify-center min-h-[60vh] space-y-6"
+            >
+              <div className="text-center">
+                <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                  <UserCheck className="h-8 w-8 text-primary" />
+                </div>
+                <h2 className="text-xl font-display font-bold text-foreground">Já pediu com a gente?</h2>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Digite seu WhatsApp ou CPF para preencher seus dados automaticamente
+                </p>
+              </div>
+
+              <div className="w-full max-w-sm space-y-3">
+                <div className="relative">
+                  <Input
+                    placeholder="WhatsApp ou CPF"
+                    value={lookupValue}
+                    onChange={(e) => { setLookupValue(e.target.value); setLookupDone(false); }}
+                    onKeyDown={(e) => e.key === "Enter" && handleLookup()}
+                    className="pr-10"
+                  />
+                  <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                </div>
+                <Button variant="hero" className="w-full" onClick={handleLookup}>
+                  <Search className="h-4 w-4 mr-2" />
+                  Buscar meus dados
+                </Button>
+              </div>
+
+              <div className="flex items-center gap-3 w-full max-w-sm">
+                <Separator className="flex-1" />
+                <span className="text-xs text-muted-foreground">ou</span>
+                <Separator className="flex-1" />
+              </div>
+
+              <Button variant="ghost" onClick={handleSkipLookup} className="text-muted-foreground">
+                <UserPlus className="h-4 w-4 mr-2" />
+                Sou novo aqui
+              </Button>
+            </motion.div>
+          )}
+
           {/* Step 1: Personal data */}
           {step === 1 && (
             <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-4">
@@ -529,23 +652,25 @@ export default function Checkout() {
       </div>
 
       {/* Fixed bottom bar */}
-      <div className="fixed bottom-0 inset-x-0 bg-card border-t border-border p-4 z-30">
-        <div className="max-w-2xl mx-auto flex items-center gap-3">
-          <div className="flex-1 min-w-0">
-            <p className="text-xs text-muted-foreground">Total</p>
-            <p className="text-lg font-bold text-foreground">{formatCurrency(grandTotal)}</p>
+      {step >= 1 && (
+        <div className="fixed bottom-0 inset-x-0 bg-card border-t border-border p-4 z-30">
+          <div className="max-w-2xl mx-auto flex items-center gap-3">
+            <div className="flex-1 min-w-0">
+              <p className="text-xs text-muted-foreground">Total</p>
+              <p className="text-lg font-bold text-foreground">{formatCurrency(grandTotal)}</p>
+            </div>
+            {step < 3 ? (
+              <Button variant="hero" size="lg" onClick={handleNext} className="shrink-0">
+                Continuar
+              </Button>
+            ) : (
+              <Button variant="hero" size="lg" onClick={handlePlaceOrder} className="shrink-0">
+                Confirmar pedido
+              </Button>
+            )}
           </div>
-          {step < 3 ? (
-            <Button variant="hero" size="lg" onClick={handleNext} className="shrink-0">
-              Continuar
-            </Button>
-          ) : (
-            <Button variant="hero" size="lg" onClick={handlePlaceOrder} className="shrink-0">
-              Confirmar pedido
-            </Button>
-          )}
         </div>
-      </div>
+      )}
     </div>
   );
 }
