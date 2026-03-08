@@ -350,18 +350,20 @@ export default function Orders() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-display font-bold text-foreground">Pedidos</h1>
-          <p className="text-sm text-muted-foreground mt-1">Gerencie todos os pedidos da confeitaria</p>
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex items-center justify-between gap-2">
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl font-display font-bold text-foreground">Pedidos</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1 hidden sm:block">Gerencie todos os pedidos da confeitaria</p>
         </div>
-        <div className="flex items-center gap-1 bg-muted rounded-lg p-1">
-          <Button variant={view === "list" ? "default" : "ghost"} size="sm" className="h-8 px-3" onClick={() => setView("list")}>
-            <LayoutList className="h-4 w-4 mr-1" /> Lista
+        <div className="flex items-center gap-1 bg-muted rounded-lg p-1 shrink-0">
+          <Button variant={view === "list" ? "default" : "ghost"} size="sm" className="h-8 px-2 sm:px-3" onClick={() => setView("list")}>
+            <LayoutList className="h-4 w-4 sm:mr-1" />
+            <span className="hidden sm:inline">Lista</span>
           </Button>
-          <Button variant={view === "kanban" ? "default" : "ghost"} size="sm" className="h-8 px-3" onClick={() => setView("kanban")}>
-            <Columns3 className="h-4 w-4 mr-1" /> Kanban
+          <Button variant={view === "kanban" ? "default" : "ghost"} size="sm" className="h-8 px-2 sm:px-3" onClick={() => setView("kanban")}>
+            <Columns3 className="h-4 w-4 sm:mr-1" />
+            <span className="hidden sm:inline">Kanban</span>
           </Button>
         </div>
       </div>
