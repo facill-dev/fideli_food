@@ -209,7 +209,7 @@ function OrderDetailDialog({ order, onClose }: { order: Order | null; onClose: (
   if (!order) return null;
   return (
     <Dialog open={!!order} onOpenChange={onClose}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="font-display flex items-center gap-2">
             Pedido {order.number}
