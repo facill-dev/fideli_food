@@ -114,7 +114,7 @@ const Landing = () => {
                 whileHover={{ scale: 1.05 }}
                 className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-card border border-border shadow-sm"
               >
-                <span className="text-xl">{n.icon}</span>
+                <NicheIcon name={n.icon} className="h-5 w-5" />
                 <span className="text-sm font-medium text-foreground">{n.label}</span>
               </motion.div>
             ))}
