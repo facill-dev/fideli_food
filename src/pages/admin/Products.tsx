@@ -26,7 +26,7 @@ import {
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from "@/components/ui/dialog";
-import { Search, Plus, Edit, Copy, Trash2 } from "lucide-react";
+import { Search, Plus, Edit, Copy, Trash2, Camera, Package } from "lucide-react";
 import { toast } from "sonner";
 
 function formatCurrency(v: number) {
@@ -208,7 +208,7 @@ export default function Products() {
         {/* Empty state */}
         {productList.length === 0 && (
           <CardContent className="text-center py-12">
-            <p className="text-4xl mb-3">📦</p>
+            <Package className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
             <p className="text-sm text-muted-foreground mb-4">Nenhum produto cadastrado ainda.</p>
             <Button size="sm" onClick={openNew}>
               <Plus className="h-4 w-4 mr-1" /> Adicionar primeiro produto
@@ -428,8 +428,8 @@ export default function Products() {
                   className="w-14 h-14 rounded-lg object-cover border border-border/50 shrink-0 bg-muted"
                 />
                 <div className="flex-1">
-                  <label className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-md border border-border bg-background text-sm hover:bg-accent transition-colors">
-                    📷 Escolher imagem
+                  <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border-2 border-dashed border-muted-foreground/30 bg-muted/50 text-sm font-medium text-foreground hover:bg-muted hover:border-muted-foreground/50 transition-all">
+                    <Camera className="h-4 w-4" /> Escolher imagem
                     <input
                       type="file"
                       accept="image/jpeg,image/png,image/webp"
