@@ -56,7 +56,7 @@ const HeroSection = () => {
                   <Clock className="h-3.5 w-3.5" />
                   Ter a Sáb · 9h–18h
                 </span>
-                <span className="inline-flex items-center gap-1 text-xs font-medium text-green-700 bg-green-50 px-2 py-0.5 rounded-full">
+                <span className="inline-flex items-center gap-1 text-xs font-medium text-foreground bg-green-50 px-2 py-0.5 rounded-full">
                   Aberto agora
                 </span>
               </div>

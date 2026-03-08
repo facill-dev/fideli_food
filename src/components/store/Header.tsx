@@ -1,4 +1,4 @@
-import { ShoppingBag, Search, Menu, X, ChevronLeft } from "lucide-react";
+import { ShoppingBag, Search, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { products } from "@/data/mockData";
 import CategoryBar from "./CategoryBar";
 import ProductCard from "./ProductCard";
-import { motion } from "framer-motion";
+
 
 const MenuSection = () => {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
