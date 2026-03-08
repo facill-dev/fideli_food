@@ -174,7 +174,7 @@ const Landing = () => {
                           className="w-10 h-10 rounded-lg flex items-center justify-center text-lg"
                           style={{ backgroundColor: s.primaryColor || "hsl(var(--primary))" }}
                         >
-                          {niche?.icon || "🏪"}
+                          <NicheIcon name={niche?.icon} className="h-5 w-5 text-white" />
                         </div>
                       )}
                       <div>

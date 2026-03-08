@@ -93,7 +93,7 @@ export default function Settings() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
-              <span className="text-2xl">{niche?.icon || "🏪"}</span>
+              <NicheIcon name={niche?.icon} className="h-6 w-6 text-primary" />
               <div>
                 <p className="text-sm font-medium text-foreground">{niche?.label || store.niche}</p>
                 <p className="text-xs text-muted-foreground">Nicho · slug: {store.slug}</p>

@@ -119,7 +119,7 @@ const Onboarding = () => {
                           : "border-border hover:border-primary/40"
                       }`}
                     >
-                      <span className="text-2xl">{n.icon}</span>
+                      <NicheIcon name={n.icon} className="h-6 w-6" />
                       <span className="text-sm font-medium text-foreground">{n.label}</span>
                     </button>
                   ))}

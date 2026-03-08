@@ -64,7 +64,7 @@ export default function AdminSidebar() {
       <SidebarHeader className="p-4">
         <a href="/admin" className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg flex items-center justify-center text-lg shrink-0 bg-primary/10">
-            {niche?.icon || "🏪"}
+            <NicheIcon name={niche?.icon} className="h-5 w-5 text-primary" />
           </div>
           {(!collapsed || isMobile) && (
             <span className="font-display font-bold text-base text-foreground truncate">

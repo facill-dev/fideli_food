@@ -173,7 +173,7 @@ const StoreFront = () => {
 
         {products.length === 0 ? (
           <div className="text-center py-16 text-muted-foreground">
-            <p className="text-4xl mb-3">{niche?.icon || "🏪"}</p>
+            <NicheIcon name={niche?.icon} className="h-10 w-10 mx-auto mb-3 text-muted-foreground" />
             <p className="text-sm">Esta loja ainda não adicionou produtos ao cardápio.</p>
           </div>
         ) : (
