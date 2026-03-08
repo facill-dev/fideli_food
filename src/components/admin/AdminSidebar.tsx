@@ -34,6 +34,7 @@ const mainItems = [
   { title: "Produtos", url: "/admin/produtos", icon: Package },
   { title: "Clientes", url: "/admin/clientes", icon: Users },
   { title: "Eventos", url: "/admin/eventos", icon: Calendar },
+  { title: "Cupons", url: "/admin/cupons", icon: Tag },
 ];
 
 const operationItems = [
