@@ -180,7 +180,7 @@ export default function Products() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todas</SelectItem>
-                {categories.map((c) => (
+                {categoryList.map((c) => (
                   <SelectItem key={c.slug} value={c.slug}>{c.name}</SelectItem>
                 ))}
               </SelectContent>
