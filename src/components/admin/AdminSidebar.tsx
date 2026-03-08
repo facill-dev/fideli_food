@@ -10,6 +10,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
+import { NicheIcon } from "@/components/NicheIcon";
 import { useLocation } from "react-router-dom";
 import {
   Sidebar,
