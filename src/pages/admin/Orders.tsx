@@ -17,16 +17,17 @@ import { Search, ChevronRight, LayoutList, Columns3, Clock, Truck, MapPin, GripV
 import {
   DndContext,
   DragOverlay,
-  closestCorners,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   type DragStartEvent,
   type DragEndEvent,
   type DragOverEvent,
   useDroppable,
+  useDraggable,
+  closestCenter,
 } from "@dnd-kit/core";
-import { useDraggable } from "@dnd-kit/core";
 
 const STATUS_MAP: Record<Order["status"], { label: string; className: string }> = {
   criado: { label: "Criado", className: "bg-muted text-muted-foreground" },
