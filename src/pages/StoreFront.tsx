@@ -68,7 +68,7 @@ const StoreFront = () => {
       <header className="sticky top-0 z-50 bg-card/95 backdrop-blur-sm border-b border-border">
         <div className="container mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-lg">{niche?.icon || "🏪"}</span>
+            <NicheIcon name={niche?.icon} className="h-5 w-5 text-foreground" />
             <span className="font-display font-bold text-foreground text-sm">{store.name}</span>
           </div>
           <Button variant="ghost" size="icon" className="relative" onClick={() => setCartOpen(true)}>
