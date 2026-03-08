@@ -26,6 +26,10 @@ import {
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Search, Plus, Edit, Copy, Trash2, Camera, Package, X } from "lucide-react";
 import { toast } from "sonner";
 
@@ -111,10 +115,14 @@ export default function Products() {
     toast.success("Produto duplicado!");
   };
 
-  const handleDelete = (id: string) => {
-    removeProduct(id);
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
+
+  const confirmDelete = () => {
+    if (!deleteTarget) return;
+    removeProduct(deleteTarget);
     refresh();
     toast.success("Produto removido!");
+    setDeleteTarget(null);
   };
 
   const handleSave = () => {
@@ -314,7 +322,7 @@ export default function Products() {
                           <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDuplicate(product)}>
                             <Copy className="h-3.5 w-3.5" />
                           </Button>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => handleDelete(product.id)}>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => setDeleteTarget(product.id)}>
                             <Trash2 className="h-3.5 w-3.5" />
                           </Button>
                         </div>
@@ -493,6 +501,24 @@ export default function Products() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Delete confirmation */}
+      <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remover produto?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação não pode ser desfeita. O produto será removido permanentemente.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Remover
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
