@@ -13,6 +13,7 @@ import Orders from "./pages/admin/Orders";
 import Products from "./pages/admin/Products";
 import Customers from "./pages/admin/Customers";
 import Events from "./pages/admin/Events";
+import Coupons from "./pages/admin/Coupons";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,7 @@ const App = () => (
               <Route path="produtos" element={<Products />} />
               <Route path="clientes" element={<Customers />} />
               <Route path="eventos" element={<Events />} />
+              <Route path="cupons" element={<Coupons />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
