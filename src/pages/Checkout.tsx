@@ -23,6 +23,8 @@ import {
   Clock,
   CheckCircle2,
   Sparkles,
+  Tag,
+  X,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
