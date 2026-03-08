@@ -7,6 +7,7 @@ import { MapPin, Clock, Star, ShoppingBag, Plus, Minus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useToast } from "@/hooks/use-toast";
+import { formatScheduleSummary, type WeekSchedule } from "@/components/store/ScheduleEditor";
 
 interface CartEntry {
   product: TenantProduct;
