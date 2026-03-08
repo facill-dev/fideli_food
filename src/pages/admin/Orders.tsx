@@ -405,8 +405,8 @@ export default function Orders() {
           onDragOver={handleDragOver}
           onDragEnd={handleDragEnd}
         >
-          <div className="overflow-x-auto pb-4 -mx-4 md:-mx-6 px-4 md:px-6">
-            <div className="flex gap-3 min-w-[900px]">
+          <div className="overflow-x-auto pb-4 -mx-3 sm:-mx-4 md:-mx-6 px-3 sm:px-4 md:px-6 -webkit-overflow-scrolling-touch">
+            <div className="flex gap-2 sm:gap-3 min-w-[800px]">
               {KANBAN_COLUMNS.map((col) => {
                 const columnOrders = filtered.filter((o) =>
                   col.status === "retirado"
