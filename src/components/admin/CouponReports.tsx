@@ -49,13 +49,23 @@ export default function CouponReports() {
 
   return (
     <div className="space-y-4 sm:space-y-6">
+      {/* Period selector */}
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-sm font-medium text-muted-foreground">Período</p>
+        <ToggleGroup type="single" value={String(days)} onValueChange={(v) => v && setDays(Number(v))} className="bg-muted rounded-lg p-0.5">
+          <ToggleGroupItem value="7" className="text-xs px-3 h-7 data-[state=on]:bg-card data-[state=on]:shadow-sm rounded-md">7 dias</ToggleGroupItem>
+          <ToggleGroupItem value="14" className="text-xs px-3 h-7 data-[state=on]:bg-card data-[state=on]:shadow-sm rounded-md">14 dias</ToggleGroupItem>
+          <ToggleGroupItem value="30" className="text-xs px-3 h-7 data-[state=on]:bg-card data-[state=on]:shadow-sm rounded-md">30 dias</ToggleGroupItem>
+        </ToggleGroup>
+      </div>
+
       {/* KPI Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
         <Card className="border-border/50">
           <CardContent className="p-3 sm:p-4">
             <div className="flex items-center gap-1.5 mb-1">
               <Tag className="h-3.5 w-3.5 text-primary" />
-              <p className="text-[10px] sm:text-xs text-muted-foreground">Usos (14 dias)</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Usos ({days} dias)</p>
             </div>
             <p className="text-xl sm:text-2xl font-bold font-display text-foreground">{totalUses}</p>
           </CardContent>
