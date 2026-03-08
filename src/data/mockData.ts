@@ -1,3 +1,9 @@
+import catBolos from "@/assets/cat-bolos.png";
+import catTortas from "@/assets/cat-tortas.png";
+import catFatias from "@/assets/cat-fatias.png";
+import catSobremesas from "@/assets/cat-sobremesas.png";
+import catCombos from "@/assets/cat-combos.png";
+import catEspeciais from "@/assets/cat-especiais.png";
 import productBolo from "@/assets/product-bolo.jpg";
 import productTorta from "@/assets/product-torta.jpg";
 import productFatia from "@/assets/product-fatia.jpg";
@@ -16,12 +22,14 @@ export interface Product {
   badge?: string;
   delivery: boolean;
   pickup: boolean;
+  rating?: number;
+  prepTime?: string;
 }
 
 export interface Category {
   id: string;
   name: string;
-  icon: string;
+  image: string;
   slug: string;
 }
 
@@ -32,12 +40,12 @@ export interface CartItem {
 }
 
 export const categories: Category[] = [
-  { id: "1", name: "Bolos Inteiros", icon: "🎂", slug: "bolos" },
-  { id: "2", name: "Tortas", icon: "🥧", slug: "tortas" },
-  { id: "3", name: "Fatias", icon: "🍰", slug: "fatias" },
-  { id: "4", name: "Sobremesas", icon: "🍫", slug: "sobremesas" },
-  { id: "5", name: "Combos", icon: "🎁", slug: "combos" },
-  { id: "6", name: "Especiais", icon: "⭐", slug: "especiais" },
+  { id: "1", name: "Bolos", image: catBolos, slug: "bolos" },
+  { id: "2", name: "Tortas", image: catTortas, slug: "tortas" },
+  { id: "3", name: "Fatias", image: catFatias, slug: "fatias" },
+  { id: "4", name: "Sobremesas", image: catSobremesas, slug: "sobremesas" },
+  { id: "5", name: "Combos", image: catCombos, slug: "combos" },
+  { id: "6", name: "Especiais", image: catEspeciais, slug: "especiais" },
 ];
 
 export const products: Product[] = [
@@ -53,6 +61,8 @@ export const products: Product[] = [
     badge: "Mais Vendido",
     delivery: true,
     pickup: true,
+    rating: 4.9,
+    prepTime: "Sob encomenda",
   },
   {
     id: "2",
@@ -65,6 +75,8 @@ export const products: Product[] = [
     availableQty: 8,
     delivery: true,
     pickup: true,
+    rating: 4.8,
+    prepTime: "Pronta entrega",
   },
   {
     id: "3",
@@ -79,6 +91,8 @@ export const products: Product[] = [
     badge: "Promoção",
     delivery: false,
     pickup: true,
+    rating: 4.7,
+    prepTime: "Pronta entrega",
   },
   {
     id: "4",
@@ -91,6 +105,8 @@ export const products: Product[] = [
     availableQty: 50,
     delivery: true,
     pickup: true,
+    rating: 4.9,
+    prepTime: "Pronta entrega",
   },
   {
     id: "5",
@@ -101,8 +117,11 @@ export const products: Product[] = [
     category: "bolos",
     available: true,
     availableQty: 3,
+    badge: "Poucas unidades",
     delivery: true,
     pickup: true,
+    rating: 4.8,
+    prepTime: "Sob encomenda",
   },
   {
     id: "6",
@@ -115,6 +134,8 @@ export const products: Product[] = [
     availableQty: 25,
     delivery: false,
     pickup: true,
+    rating: 4.6,
+    prepTime: "Pronta entrega",
   },
   {
     id: "7",
@@ -129,6 +150,8 @@ export const products: Product[] = [
     badge: "Oferta",
     delivery: false,
     pickup: true,
+    rating: 4.9,
+    prepTime: "Pronta entrega",
   },
   {
     id: "8",
@@ -141,5 +164,7 @@ export const products: Product[] = [
     availableQty: 4,
     delivery: true,
     pickup: true,
+    rating: 4.7,
+    prepTime: "Pronta entrega",
   },
 ];
