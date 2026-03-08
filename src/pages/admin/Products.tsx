@@ -208,7 +208,7 @@ export default function Products() {
         {/* Empty state */}
         {productList.length === 0 && (
           <CardContent className="text-center py-12">
-            <p className="text-4xl mb-3">📦</p>
+            <Package className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
             <p className="text-sm text-muted-foreground mb-4">Nenhum produto cadastrado ainda.</p>
             <Button size="sm" onClick={openNew}>
               <Plus className="h-4 w-4 mr-1" /> Adicionar primeiro produto
