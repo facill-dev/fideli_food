@@ -26,8 +26,9 @@ const COLORS = [
 ];
 
 export default function CouponReports() {
-  const analytics = useMemo(() => getCouponAnalytics(), []);
-  const dailyAgg = useMemo(() => getAggregatedDailyUsage(), []);
+  const [days, setDays] = useState(14);
+  const analytics = useMemo(() => getCouponAnalytics(days), [days]);
+  const dailyAgg = useMemo(() => getAggregatedDailyUsage(days), [days]);
 
   const totalUses = analytics.reduce((s, a) => s + a.totalUses, 0);
   const totalRevenue = analytics.reduce((s, a) => s + a.totalRevenue, 0);
