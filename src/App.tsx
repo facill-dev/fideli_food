@@ -4,8 +4,12 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CartProvider } from "@/contexts/CartContext";
+import { AuthProvider } from "@/contexts/AuthContext";
+import Landing from "./pages/Landing";
+import Auth from "./pages/Auth";
+import Onboarding from "./pages/Onboarding";
+import StoreFront from "./pages/StoreFront";
 import Checkout from "./pages/Checkout";
-import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import AdminLayout from "./components/admin/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
@@ -20,25 +24,37 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <CartProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/checkout" element={<Checkout />} />
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<Dashboard />} />
-              <Route path="pedidos" element={<Orders />} />
-              <Route path="produtos" element={<Products />} />
-              <Route path="clientes" element={<Customers />} />
-              <Route path="eventos" element={<Events />} />
-              <Route path="cupons" element={<Coupons />} />
-            </Route>
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </CartProvider>
+      <AuthProvider>
+        <CartProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              {/* Public */}
+              <Route path="/" element={<Landing />} />
+              <Route path="/login" element={<Auth />} />
+              <Route path="/cadastro" element={<Auth />} />
+              <Route path="/onboarding" element={<Onboarding />} />
+
+              {/* Dynamic storefront */}
+              <Route path="/loja/:slug" element={<StoreFront />} />
+              <Route path="/checkout" element={<Checkout />} />
+
+              {/* Admin (multi-tenant) */}
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<Dashboard />} />
+                <Route path="pedidos" element={<Orders />} />
+                <Route path="produtos" element={<Products />} />
+                <Route path="clientes" element={<Customers />} />
+                <Route path="eventos" element={<Events />} />
+                <Route path="cupons" element={<Coupons />} />
+              </Route>
+
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </CartProvider>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
