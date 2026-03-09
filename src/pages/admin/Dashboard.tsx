@@ -189,6 +189,70 @@ const CHART_COLORS = [
   "hsl(var(--primary) / 0.3)",
 ];
 
+const STATUS_COLORS: Record<string, string> = {
+  pending: "#f59e0b",
+  confirmed: "#3b82f6",
+  preparing: "#8b5cf6",
+  ready: "#22c55e",
+  delivered: "#10b981",
+  cancelled: "#ef4444",
+};
+
+const STATUS_LABELS: Record<string, string> = {
+  pending: "Pendente",
+  confirmed: "Confirmado",
+  preparing: "Preparando",
+  ready: "Pronto",
+  delivered: "Entregue",
+  cancelled: "Cancelado",
+};
+
+interface StatusData {
+  name: string;
+  value: number;
+  status: string;
+}
+
+function computeStatusData(orders: TenantOrder[]): StatusData[] {
+  const counts: Record<string, number> = {};
+  orders.forEach((o) => {
+    counts[o.status] = (counts[o.status] || 0) + 1;
+  });
+  return Object.entries(counts)
+    .map(([status, value]) => ({
+      name: STATUS_LABELS[status] || status,
+      value,
+      status,
+    }))
+    .filter((d) => d.value > 0)
+    .sort((a, b) => b.value - a.value);
+}
+
+function exportOrdersCSV(orders: TenantOrder[], storeName: string) {
+  const headers = ["ID", "Data", "Cliente", "Telefone", "Itens", "Total", "Status"];
+  const rows = orders.map((o) => [
+    o.id,
+    new Date(o.createdAt).toLocaleString("pt-BR"),
+    o.customerName,
+    o.customerPhone,
+    o.items.map((i) => `${i.qty}x ${i.name}`).join("; "),
+    o.total.toFixed(2).replace(".", ","),
+    STATUS_LABELS[o.status] || o.status,
+  ]);
+
+  const csvContent = [headers, ...rows]
+    .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(","))
+    .join("\n");
+
+  const blob = new Blob(["\ufeff" + csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `pedidos-${storeName}-${new Date().toISOString().slice(0, 10)}.csv`;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
 export default function Dashboard() {
   const { store } = useAuth();
   const navigate = useNavigate();
