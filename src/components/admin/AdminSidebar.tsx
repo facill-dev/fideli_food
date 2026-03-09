@@ -7,6 +7,7 @@ import {
   Settings,
   Store,
   Tag,
+  Heart,
   ExternalLink,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
