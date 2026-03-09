@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useState, useMemo } from "react";
 import { getStoreBySlug, getProductsByStore, getCategoriesByStore, NICHES } from "@/lib/multiTenantStorage";
+import { getStoreConfig, getWallet, pointsToMoney } from "@/lib/loyaltyStorage";
 import type { TenantProduct, TenantCategory, StoreConfig } from "@/lib/multiTenantStorage";
 import { motion } from "framer-motion";
 import { MapPin, Clock, Star, ShoppingBag, Plus, Minus, X } from "lucide-react";
