@@ -288,31 +288,39 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 className="text-xl sm:text-2xl font-display font-bold text-foreground">Dashboard</h1>
           <p className="text-xs sm:text-sm text-muted-foreground mt-1">Visão geral da {store?.name}</p>
         </div>
-        {!isEmpty && (
-          <div className="flex gap-1 p-1 bg-muted rounded-lg">
-            <Button
-              variant={period === "7d" ? "default" : "ghost"}
-              size="sm"
-              className="text-xs h-7 px-3"
-              onClick={() => setPeriod("7d")}
-            >
-              7 dias
+        <div className="flex items-center gap-2">
+          {!isEmpty && orders.length > 0 && (
+            <Button variant="outline" size="sm" className="text-xs gap-1.5" onClick={handleExportCSV}>
+              <Download className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Exportar CSV</span>
             </Button>
-            <Button
-              variant={period === "30d" ? "default" : "ghost"}
-              size="sm"
-              className="text-xs h-7 px-3"
-              onClick={() => setPeriod("30d")}
-            >
-              30 dias
-            </Button>
-          </div>
-        )}
+          )}
+          {!isEmpty && (
+            <div className="flex gap-1 p-1 bg-muted rounded-lg">
+              <Button
+                variant={period === "7d" ? "default" : "ghost"}
+                size="sm"
+                className="text-xs h-7 px-3"
+                onClick={() => setPeriod("7d")}
+              >
+                7 dias
+              </Button>
+              <Button
+                variant={period === "30d" ? "default" : "ghost"}
+                size="sm"
+                className="text-xs h-7 px-3"
+                onClick={() => setPeriod("30d")}
+              >
+                30 dias
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* KPIs */}
