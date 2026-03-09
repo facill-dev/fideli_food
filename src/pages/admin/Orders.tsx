@@ -15,6 +15,7 @@ import {
 import { Search, ChevronRight, ClipboardList, MessageCircle, ExternalLink } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { getOrdersByStore, updateOrderStatus, addNotification, type TenantOrder } from "@/lib/multiTenantStorage";
+import { releasePending, reverseBenefits, getStoreConfig } from "@/lib/loyaltyStorage";
 
 const STATUS_MAP: Record<TenantOrder["status"], { label: string; className: string }> = {
   pending: { label: "Pendente", className: "bg-amber-100 text-amber-800 border-amber-200" },
