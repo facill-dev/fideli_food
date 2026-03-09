@@ -26,12 +26,15 @@ import {
   Area,
   BarChart,
   Bar,
+  PieChart,
+  Pie,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
   Cell,
+  Legend,
 } from "recharts";
 
 function formatCurrency(value: number) {
