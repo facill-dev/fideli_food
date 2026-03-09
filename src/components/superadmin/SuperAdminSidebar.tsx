@@ -1,5 +1,5 @@
 import {
-  LayoutDashboard, Store, ShoppingBag, Users, LogOut, Shield,
+  LayoutDashboard, Store, ShoppingBag, Users, LogOut, Shield, Heart,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation, useNavigate } from "react-router-dom";
