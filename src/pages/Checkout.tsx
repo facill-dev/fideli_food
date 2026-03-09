@@ -32,6 +32,11 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { saveCustomerData, getCustomerData, findCustomerByIdentifier } from "@/lib/customerStorage";
+import {
+  getStoreConfig, getWallet, calculateEarnings, redeemPoints, redeemCashback,
+  creditPending, pointsToMoney, getGlobalConfig,
+  type LoyaltyWallet, type LoyaltyStoreConfig,
+} from "@/lib/loyaltyStorage";
 
 function formatCurrency(v: number) {
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
