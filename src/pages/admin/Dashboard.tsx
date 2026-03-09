@@ -81,6 +81,9 @@ export default function Dashboard() {
         <KpiCard title="Categorias" value={String(categories.length)} icon={ShoppingBag} />
         <KpiCard title="Pedidos" value={String(orders.length)} icon={TrendingUp} />
         <KpiCard title="Faturamento" value={formatCurrency(totalRevenue)} icon={DollarSign} accent />
+        {loyaltyConfig.enabled && (
+          <KpiCard title="Clientes fidelizados" value={String(loyaltyClients)} icon={Heart} />
+        )}
       </div>
 
       {/* Getting started / Quick actions */}
