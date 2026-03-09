@@ -88,6 +88,21 @@ export default function Checkout() {
   const [lookupValue, setLookupValue] = useState("");
   const [lookupDone, setLookupDone] = useState(false);
 
+  // Loyalty state
+  const [usePointsActive, setUsePointsActive] = useState(false);
+  const [useCashbackActive, setUseCashbackActive] = useState(false);
+  const [pointsToUse, setPointsToUse] = useState(0);
+  const [cashbackToUse, setCashbackToUse] = useState(0);
+
+  // TODO: In a real app, storeId would come from the cart context
+  // For now we use a placeholder that won't match unless products came from a tenant store
+  const loyaltyStoreId = ""; // Will be enhanced when StoreFront→Checkout flow is connected
+  const loyaltyConfig = getStoreConfig(loyaltyStoreId);
+  const globalLoyalty = getGlobalConfig();
+  const loyaltyEnabled = globalLoyalty.enabled && loyaltyConfig.enabled;
+  const customerPhone = form.phone.replace(/\D/g, "");
+  const wallet = loyaltyEnabled && customerPhone.length >= 10 ? getWallet(loyaltyStoreId, customerPhone) : undefined;
+
   // Auto-fill from localStorage on mount
   useEffect(() => {
     const saved = getCustomerData();
