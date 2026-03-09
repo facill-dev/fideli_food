@@ -40,6 +40,8 @@ const StoreFront = () => {
   }
 
   const niche = NICHES.find((n) => n.id === store.niche);
+  const loyaltyConfig = getStoreConfig(store.id);
+  const loyaltyActive = loyaltyConfig.enabled && (loyaltyConfig.pointsEnabled || loyaltyConfig.cashbackEnabled);
   const filtered = activeCategory ? products.filter((p) => p.category === activeCategory) : products;
   const cartCount = cart.reduce((s, c) => s + c.qty, 0);
   const cartTotal = cart.reduce((s, c) => s + (c.product.promoPrice ?? c.product.price) * c.qty, 0);
