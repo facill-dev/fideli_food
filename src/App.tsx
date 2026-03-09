@@ -20,6 +20,7 @@ import Customers from "./pages/admin/Customers";
 import Events from "./pages/admin/Events";
 import Coupons from "./pages/admin/Coupons";
 import Settings from "./pages/admin/Settings";
+import Loyalty from "./pages/admin/Loyalty";
 import SuperAdminLayout from "./components/superadmin/SuperAdminLayout";
 import SADashboard from "./pages/superadmin/SADashboard";
 import SAStores from "./pages/superadmin/SAStores";
