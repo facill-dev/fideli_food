@@ -275,11 +275,16 @@ export default function Dashboard() {
   const salesData = useMemo(() => computeSalesData(orders, period), [orders, period]);
   const topProducts = useMemo(() => computeTopProducts(orders, period), [orders, period]);
   const avgTicketTrend = useMemo(() => computeAvgTicketTrend(orders, period), [orders, period]);
+  const statusData = useMemo(() => computeStatusData(orders), [orders]);
 
   // Period stats
   const periodOrders = salesData.reduce((s, d) => s + d.orders, 0);
   const periodRevenue = salesData.reduce((s, d) => s + d.total, 0);
   const periodAvgTicket = periodOrders > 0 ? periodRevenue / periodOrders : 0;
+
+  const handleExportCSV = () => {
+    exportOrdersCSV(orders, store?.name || "loja");
+  };
 
   return (
     <div className="space-y-4 sm:space-y-6">
