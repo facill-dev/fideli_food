@@ -28,6 +28,9 @@ import {
   Search,
   UserCheck,
   UserPlus,
+  Heart,
+  Star,
+  Coins,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
