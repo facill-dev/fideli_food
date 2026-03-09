@@ -5,6 +5,7 @@ import {
   getOrdersByStore,
   getCategoriesByStore,
 } from "@/lib/multiTenantStorage";
+import { getStoreConfig, getWalletsByStore } from "@/lib/loyaltyStorage";
 import {
   DollarSign,
   ShoppingBag,
@@ -13,6 +14,7 @@ import {
   ArrowUpRight,
   ExternalLink,
   Rocket,
+  Heart,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
