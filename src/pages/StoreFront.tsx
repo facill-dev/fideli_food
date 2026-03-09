@@ -137,6 +137,25 @@ const StoreFront = () => {
         </div>
       </section>
 
+      {/* Loyalty banner */}
+      {loyaltyActive && (
+        <div className="container mx-auto px-4 mb-4">
+          <div className="bg-primary/5 border border-primary/20 rounded-xl p-3 flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-primary/10 shrink-0">
+              <Heart className="h-5 w-5 text-primary" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-medium text-foreground">{loyaltyConfig.programName}</p>
+              <p className="text-xs text-muted-foreground">
+                {loyaltyConfig.pointsEnabled && `${loyaltyConfig.pointsPerReal} pontos por R$1`}
+                {loyaltyConfig.pointsEnabled && loyaltyConfig.cashbackEnabled && " · "}
+                {loyaltyConfig.cashbackEnabled && `${loyaltyConfig.cashbackPercent}% de cashback`}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Categories */}
       {categories.length > 0 && (
         <div className="container mx-auto px-4 mb-4">

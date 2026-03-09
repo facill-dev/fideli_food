@@ -68,6 +68,7 @@ const App = () => (
                 <Route path="lojas" element={<SAStores />} />
                 <Route path="pedidos" element={<SAOrders />} />
                 <Route path="usuarios" element={<SAUsers />} />
+                <Route path="fidelizacao" element={<SALoyalty />} />
               </Route>
 
               <Route path="*" element={<NotFound />} />

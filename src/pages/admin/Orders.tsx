@@ -65,6 +65,17 @@ export default function Orders() {
         read: false,
         orderId,
       });
+
+      // Loyalty: release or reverse benefits
+      const loyaltyConfig = getStoreConfig(storeId);
+      if (loyaltyConfig.enabled) {
+        if (status === loyaltyConfig.releaseOn || status === "delivered") {
+          releasePending(orderId);
+        }
+        if (status === "cancelled") {
+          reverseBenefits(orderId);
+        }
+      }
     }
     refresh();
     setSelectedOrder(null);

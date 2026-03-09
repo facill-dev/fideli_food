@@ -37,6 +37,7 @@ const mainItems = [
   { title: "Clientes", url: "/admin/clientes", icon: Users },
   { title: "Eventos", url: "/admin/eventos", icon: Calendar },
   { title: "Cupons", url: "/admin/cupons", icon: Tag },
+  { title: "Fidelização", url: "/admin/fidelizacao", icon: Heart },
 ];
 
 const operationItems = [

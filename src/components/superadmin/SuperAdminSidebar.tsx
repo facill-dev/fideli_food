@@ -17,6 +17,7 @@ const items = [
   { title: "Lojas", url: "/superadmin/lojas", icon: Store },
   { title: "Pedidos", url: "/superadmin/pedidos", icon: ShoppingBag },
   { title: "Usuários", url: "/superadmin/usuarios", icon: Users },
+  { title: "Fidelização", url: "/superadmin/fidelizacao", icon: Heart },
 ];
 
 export default function SuperAdminSidebar() {
