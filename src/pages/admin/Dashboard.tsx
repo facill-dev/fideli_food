@@ -62,6 +62,9 @@ export default function Dashboard() {
   const totalRevenue = orders.reduce((s, o) => s + o.total, 0);
   const avgTicket = orders.length > 0 ? totalRevenue / orders.length : 0;
   const pendingOrders = orders.filter((o) => o.status === "pending" || o.status === "confirmed").length;
+  const loyaltyConfig = getStoreConfig(storeId);
+  const loyaltyWallets = getWalletsByStore(storeId);
+  const loyaltyClients = loyaltyWallets.filter((w) => w.pointsBalance > 0 || w.cashbackBalance > 0).length;
 
   const isEmpty = products.length === 0 && orders.length === 0;
 
