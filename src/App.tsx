@@ -26,6 +26,7 @@ import SADashboard from "./pages/superadmin/SADashboard";
 import SAStores from "./pages/superadmin/SAStores";
 import SAOrders from "./pages/superadmin/SAOrders";
 import SAUsers from "./pages/superadmin/SAUsers";
+import SALoyalty from "./pages/superadmin/SALoyalty";
 
 const queryClient = new QueryClient();
 
