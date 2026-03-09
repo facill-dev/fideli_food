@@ -487,49 +487,33 @@ export default function Dashboard() {
               </CardContent>
             </Card>
 
-            {/* Avg Ticket Trend */}
+            {/* Sales by Status Donut */}
             <Card className="border-border/50">
               <CardHeader className="pb-2 px-3 sm:px-6 pt-3 sm:pt-6">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-sm sm:text-base font-display">Ticket médio</CardTitle>
-                  <div className="text-right">
-                    <p className="text-lg font-bold font-display text-foreground">{formatCurrency(periodAvgTicket)}</p>
-                    <p className="text-[10px] text-muted-foreground">média no período</p>
-                  </div>
-                </div>
+                <CardTitle className="text-sm sm:text-base font-display">Vendas por status</CardTitle>
               </CardHeader>
               <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
-                {avgTicketTrend.every((d) => d.avg === 0) ? (
+                {statusData.length === 0 ? (
                   <div className="h-[180px] flex items-center justify-center">
-                    <p className="text-sm text-muted-foreground">Nenhuma venda no período</p>
+                    <p className="text-sm text-muted-foreground">Nenhum pedido para classificar</p>
                   </div>
                 ) : (
                   <div className="h-[180px] sm:h-[200px]">
                     <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={avgTicketTrend} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                        <defs>
-                          <linearGradient id="ticketGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.2} />
-                            <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
-                          </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                        <XAxis
-                          dataKey="date"
-                          tick={{ fontSize: 10 }}
-                          tickLine={false}
-                          axisLine={false}
-                          className="text-muted-foreground"
-                          interval={period === "30d" ? 4 : 0}
-                        />
-                        <YAxis
-                          tick={{ fontSize: 10 }}
-                          tickLine={false}
-                          axisLine={false}
-                          className="text-muted-foreground"
-                          tickFormatter={(v) => `R$${v}`}
-                          width={50}
-                        />
+                      <PieChart>
+                        <Pie
+                          data={statusData}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={45}
+                          outerRadius={70}
+                          paddingAngle={2}
+                          dataKey="value"
+                        >
+                          {statusData.map((entry) => (
+                            <Cell key={entry.status} fill={STATUS_COLORS[entry.status] || "hsl(var(--muted-foreground))"} />
+                          ))}
+                        </Pie>
                         <Tooltip
                           contentStyle={{
                             backgroundColor: "hsl(var(--card))",
@@ -537,23 +521,25 @@ export default function Dashboard() {
                             borderRadius: "8px",
                             fontSize: "12px",
                           }}
-                          formatter={(value: number) => [formatCurrency(value), "Ticket médio"]}
-                          labelFormatter={(label) => `Data: ${label}`}
+                          formatter={(value: number, _name, props) => [
+                            `${value} pedido${value > 1 ? "s" : ""}`,
+                            props.payload.name,
+                          ]}
                         />
-                        <Area
-                          type="monotone"
-                          dataKey="avg"
-                          stroke="hsl(var(--primary))"
-                          strokeWidth={2}
-                          fill="url(#ticketGradient)"
+                        <Legend
+                          verticalAlign="bottom"
+                          height={36}
+                          formatter={(value) => <span className="text-xs text-foreground">{value}</span>}
                         />
-                      </AreaChart>
+                      </PieChart>
                     </ResponsiveContainer>
                   </div>
                 )}
               </CardContent>
             </Card>
           </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
 
           {/* Recent orders + Quick stats */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
