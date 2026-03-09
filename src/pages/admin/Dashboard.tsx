@@ -539,8 +539,6 @@ export default function Dashboard() {
             </Card>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
-
           {/* Recent orders + Quick stats */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
             {/* Recent orders */}
