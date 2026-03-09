@@ -20,18 +20,22 @@ import {
   Rocket,
   Heart,
   BarChart3,
+  Download,
 } from "lucide-react";
 import {
   AreaChart,
   Area,
   BarChart,
   Bar,
+  PieChart,
+  Pie,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
   Cell,
+  Legend,
 } from "recharts";
 
 function formatCurrency(value: number) {
@@ -185,6 +189,70 @@ const CHART_COLORS = [
   "hsl(var(--primary) / 0.3)",
 ];
 
+const STATUS_COLORS: Record<string, string> = {
+  pending: "#f59e0b",
+  confirmed: "#3b82f6",
+  preparing: "#8b5cf6",
+  ready: "#22c55e",
+  delivered: "#10b981",
+  cancelled: "#ef4444",
+};
+
+const STATUS_LABELS: Record<string, string> = {
+  pending: "Pendente",
+  confirmed: "Confirmado",
+  preparing: "Preparando",
+  ready: "Pronto",
+  delivered: "Entregue",
+  cancelled: "Cancelado",
+};
+
+interface StatusData {
+  name: string;
+  value: number;
+  status: string;
+}
+
+function computeStatusData(orders: TenantOrder[]): StatusData[] {
+  const counts: Record<string, number> = {};
+  orders.forEach((o) => {
+    counts[o.status] = (counts[o.status] || 0) + 1;
+  });
+  return Object.entries(counts)
+    .map(([status, value]) => ({
+      name: STATUS_LABELS[status] || status,
+      value,
+      status,
+    }))
+    .filter((d) => d.value > 0)
+    .sort((a, b) => b.value - a.value);
+}
+
+function exportOrdersCSV(orders: TenantOrder[], storeName: string) {
+  const headers = ["ID", "Data", "Cliente", "Telefone", "Itens", "Total", "Status"];
+  const rows = orders.map((o) => [
+    o.id,
+    new Date(o.createdAt).toLocaleString("pt-BR"),
+    o.customerName,
+    o.customerPhone,
+    o.items.map((i) => `${i.qty}x ${i.name}`).join("; "),
+    o.total.toFixed(2).replace(".", ","),
+    STATUS_LABELS[o.status] || o.status,
+  ]);
+
+  const csvContent = [headers, ...rows]
+    .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(","))
+    .join("\n");
+
+  const blob = new Blob(["\ufeff" + csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `pedidos-${storeName}-${new Date().toISOString().slice(0, 10)}.csv`;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
 export default function Dashboard() {
   const { store } = useAuth();
   const navigate = useNavigate();
@@ -207,39 +275,52 @@ export default function Dashboard() {
   const salesData = useMemo(() => computeSalesData(orders, period), [orders, period]);
   const topProducts = useMemo(() => computeTopProducts(orders, period), [orders, period]);
   const avgTicketTrend = useMemo(() => computeAvgTicketTrend(orders, period), [orders, period]);
+  const statusData = useMemo(() => computeStatusData(orders), [orders]);
 
   // Period stats
   const periodOrders = salesData.reduce((s, d) => s + d.orders, 0);
   const periodRevenue = salesData.reduce((s, d) => s + d.total, 0);
   const periodAvgTicket = periodOrders > 0 ? periodRevenue / periodOrders : 0;
 
+  const handleExportCSV = () => {
+    exportOrdersCSV(orders, store?.name || "loja");
+  };
+
   return (
     <div className="space-y-4 sm:space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 className="text-xl sm:text-2xl font-display font-bold text-foreground">Dashboard</h1>
           <p className="text-xs sm:text-sm text-muted-foreground mt-1">Visão geral da {store?.name}</p>
         </div>
-        {!isEmpty && (
-          <div className="flex gap-1 p-1 bg-muted rounded-lg">
-            <Button
-              variant={period === "7d" ? "default" : "ghost"}
-              size="sm"
-              className="text-xs h-7 px-3"
-              onClick={() => setPeriod("7d")}
-            >
-              7 dias
+        <div className="flex items-center gap-2">
+          {!isEmpty && orders.length > 0 && (
+            <Button variant="outline" size="sm" className="text-xs gap-1.5" onClick={handleExportCSV}>
+              <Download className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Exportar CSV</span>
             </Button>
-            <Button
-              variant={period === "30d" ? "default" : "ghost"}
-              size="sm"
-              className="text-xs h-7 px-3"
-              onClick={() => setPeriod("30d")}
-            >
-              30 dias
-            </Button>
-          </div>
-        )}
+          )}
+          {!isEmpty && (
+            <div className="flex gap-1 p-1 bg-muted rounded-lg">
+              <Button
+                variant={period === "7d" ? "default" : "ghost"}
+                size="sm"
+                className="text-xs h-7 px-3"
+                onClick={() => setPeriod("7d")}
+              >
+                7 dias
+              </Button>
+              <Button
+                variant={period === "30d" ? "default" : "ghost"}
+                size="sm"
+                className="text-xs h-7 px-3"
+                onClick={() => setPeriod("30d")}
+              >
+                30 dias
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* KPIs */}
@@ -406,49 +487,33 @@ export default function Dashboard() {
               </CardContent>
             </Card>
 
-            {/* Avg Ticket Trend */}
+            {/* Sales by Status Donut */}
             <Card className="border-border/50">
               <CardHeader className="pb-2 px-3 sm:px-6 pt-3 sm:pt-6">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-sm sm:text-base font-display">Ticket médio</CardTitle>
-                  <div className="text-right">
-                    <p className="text-lg font-bold font-display text-foreground">{formatCurrency(periodAvgTicket)}</p>
-                    <p className="text-[10px] text-muted-foreground">média no período</p>
-                  </div>
-                </div>
+                <CardTitle className="text-sm sm:text-base font-display">Vendas por status</CardTitle>
               </CardHeader>
               <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
-                {avgTicketTrend.every((d) => d.avg === 0) ? (
+                {statusData.length === 0 ? (
                   <div className="h-[180px] flex items-center justify-center">
-                    <p className="text-sm text-muted-foreground">Nenhuma venda no período</p>
+                    <p className="text-sm text-muted-foreground">Nenhum pedido para classificar</p>
                   </div>
                 ) : (
                   <div className="h-[180px] sm:h-[200px]">
                     <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={avgTicketTrend} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                        <defs>
-                          <linearGradient id="ticketGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.2} />
-                            <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
-                          </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                        <XAxis
-                          dataKey="date"
-                          tick={{ fontSize: 10 }}
-                          tickLine={false}
-                          axisLine={false}
-                          className="text-muted-foreground"
-                          interval={period === "30d" ? 4 : 0}
-                        />
-                        <YAxis
-                          tick={{ fontSize: 10 }}
-                          tickLine={false}
-                          axisLine={false}
-                          className="text-muted-foreground"
-                          tickFormatter={(v) => `R$${v}`}
-                          width={50}
-                        />
+                      <PieChart>
+                        <Pie
+                          data={statusData}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={45}
+                          outerRadius={70}
+                          paddingAngle={2}
+                          dataKey="value"
+                        >
+                          {statusData.map((entry) => (
+                            <Cell key={entry.status} fill={STATUS_COLORS[entry.status] || "hsl(var(--muted-foreground))"} />
+                          ))}
+                        </Pie>
                         <Tooltip
                           contentStyle={{
                             backgroundColor: "hsl(var(--card))",
@@ -456,17 +521,17 @@ export default function Dashboard() {
                             borderRadius: "8px",
                             fontSize: "12px",
                           }}
-                          formatter={(value: number) => [formatCurrency(value), "Ticket médio"]}
-                          labelFormatter={(label) => `Data: ${label}`}
+                          formatter={(value: number, _name, props) => [
+                            `${value} pedido${value > 1 ? "s" : ""}`,
+                            props.payload.name,
+                          ]}
                         />
-                        <Area
-                          type="monotone"
-                          dataKey="avg"
-                          stroke="hsl(var(--primary))"
-                          strokeWidth={2}
-                          fill="url(#ticketGradient)"
+                        <Legend
+                          verticalAlign="bottom"
+                          height={36}
+                          formatter={(value) => <span className="text-xs text-foreground">{value}</span>}
                         />
-                      </AreaChart>
+                      </PieChart>
                     </ResponsiveContainer>
                   </div>
                 )}
