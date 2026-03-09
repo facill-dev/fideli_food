@@ -131,7 +131,11 @@ export default function Checkout() {
       : appliedCoupon.value
     : 0;
 
-  const grandTotal = Math.max(0, total + deliveryFee - discount);
+  // Loyalty discounts
+  const pointsDiscount = usePointsActive && wallet ? pointsToMoney(loyaltyStoreId, pointsToUse) : 0;
+  const cashbackDiscount = useCashbackActive ? cashbackToUse : 0;
+
+  const grandTotal = Math.max(0, total + deliveryFee - discount - pointsDiscount - cashbackDiscount);
 
   const handleApplyCoupon = () => {
     const code = couponCode.trim().toUpperCase();
