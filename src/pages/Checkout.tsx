@@ -661,17 +661,29 @@ export default function Checkout() {
                       {deliveryFee === 0 ? "Grátis" : formatCurrency(deliveryFee)}
                     </span>
                   </div>
-                  {discount > 0 && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-primary">Desconto</span>
-                      <span className="text-primary font-medium">-{formatCurrency(discount)}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between pt-1.5 border-t border-border">
-                    <span className="text-sm font-bold text-foreground">Total</span>
-                    <span className="text-lg font-bold text-foreground">{formatCurrency(grandTotal)}</span>
-                  </div>
-                </div>
+                   {discount > 0 && (
+                     <div className="flex justify-between text-sm">
+                       <span className="text-primary">Desconto cupom</span>
+                       <span className="text-primary font-medium">-{formatCurrency(discount)}</span>
+                     </div>
+                   )}
+                   {pointsDiscount > 0 && (
+                     <div className="flex justify-between text-sm">
+                       <span className="text-primary">Desconto pontos</span>
+                       <span className="text-primary font-medium">-{formatCurrency(pointsDiscount)}</span>
+                     </div>
+                   )}
+                   {cashbackDiscount > 0 && (
+                     <div className="flex justify-between text-sm">
+                       <span className="text-primary">Desconto cashback</span>
+                       <span className="text-primary font-medium">-{formatCurrency(cashbackDiscount)}</span>
+                     </div>
+                   )}
+                   <div className="flex justify-between pt-1.5 border-t border-border">
+                     <span className="text-sm font-bold text-foreground">Total</span>
+                     <span className="text-lg font-bold text-foreground">{formatCurrency(grandTotal)}</span>
+                   </div>
+                 </div>
               </div>
             </motion.div>
           )}
