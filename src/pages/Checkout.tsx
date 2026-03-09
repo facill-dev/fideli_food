@@ -28,10 +28,18 @@ import {
   Search,
   UserCheck,
   UserPlus,
+  Heart,
+  Star,
+  Coins,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { saveCustomerData, getCustomerData, findCustomerByIdentifier } from "@/lib/customerStorage";
+import {
+  getStoreConfig, getWallet, calculateEarnings, redeemPoints, redeemCashback,
+  creditPending, pointsToMoney, getGlobalConfig,
+  type LoyaltyWallet, type LoyaltyStoreConfig,
+} from "@/lib/loyaltyStorage";
 
 function formatCurrency(v: number) {
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
@@ -80,6 +88,21 @@ export default function Checkout() {
   const [lookupValue, setLookupValue] = useState("");
   const [lookupDone, setLookupDone] = useState(false);
 
+  // Loyalty state
+  const [usePointsActive, setUsePointsActive] = useState(false);
+  const [useCashbackActive, setUseCashbackActive] = useState(false);
+  const [pointsToUse, setPointsToUse] = useState(0);
+  const [cashbackToUse, setCashbackToUse] = useState(0);
+
+  // TODO: In a real app, storeId would come from the cart context
+  // For now we use a placeholder that won't match unless products came from a tenant store
+  const loyaltyStoreId = ""; // Will be enhanced when StoreFront→Checkout flow is connected
+  const loyaltyConfig = getStoreConfig(loyaltyStoreId);
+  const globalLoyalty = getGlobalConfig();
+  const loyaltyEnabled = globalLoyalty.enabled && loyaltyConfig.enabled;
+  const customerPhone = form.phone.replace(/\D/g, "");
+  const wallet = loyaltyEnabled && customerPhone.length >= 10 ? getWallet(loyaltyStoreId, customerPhone) : undefined;
+
   // Auto-fill from localStorage on mount
   useEffect(() => {
     const saved = getCustomerData();
@@ -108,7 +131,11 @@ export default function Checkout() {
       : appliedCoupon.value
     : 0;
 
-  const grandTotal = Math.max(0, total + deliveryFee - discount);
+  // Loyalty discounts
+  const pointsDiscount = usePointsActive && wallet ? pointsToMoney(loyaltyStoreId, pointsToUse) : 0;
+  const cashbackDiscount = useCashbackActive ? cashbackToUse : 0;
+
+  const grandTotal = Math.max(0, total + deliveryFee - discount - pointsDiscount - cashbackDiscount);
 
   const handleApplyCoupon = () => {
     const code = couponCode.trim().toUpperCase();
@@ -634,17 +661,29 @@ export default function Checkout() {
                       {deliveryFee === 0 ? "Grátis" : formatCurrency(deliveryFee)}
                     </span>
                   </div>
-                  {discount > 0 && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-primary">Desconto</span>
-                      <span className="text-primary font-medium">-{formatCurrency(discount)}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between pt-1.5 border-t border-border">
-                    <span className="text-sm font-bold text-foreground">Total</span>
-                    <span className="text-lg font-bold text-foreground">{formatCurrency(grandTotal)}</span>
-                  </div>
-                </div>
+                   {discount > 0 && (
+                     <div className="flex justify-between text-sm">
+                       <span className="text-primary">Desconto cupom</span>
+                       <span className="text-primary font-medium">-{formatCurrency(discount)}</span>
+                     </div>
+                   )}
+                   {pointsDiscount > 0 && (
+                     <div className="flex justify-between text-sm">
+                       <span className="text-primary">Desconto pontos</span>
+                       <span className="text-primary font-medium">-{formatCurrency(pointsDiscount)}</span>
+                     </div>
+                   )}
+                   {cashbackDiscount > 0 && (
+                     <div className="flex justify-between text-sm">
+                       <span className="text-primary">Desconto cashback</span>
+                       <span className="text-primary font-medium">-{formatCurrency(cashbackDiscount)}</span>
+                     </div>
+                   )}
+                   <div className="flex justify-between pt-1.5 border-t border-border">
+                     <span className="text-sm font-bold text-foreground">Total</span>
+                     <span className="text-lg font-bold text-foreground">{formatCurrency(grandTotal)}</span>
+                   </div>
+                 </div>
               </div>
             </motion.div>
           )}

@@ -5,6 +5,7 @@ import {
   getOrdersByStore,
   getCategoriesByStore,
 } from "@/lib/multiTenantStorage";
+import { getStoreConfig, getWalletsByStore } from "@/lib/loyaltyStorage";
 import {
   DollarSign,
   ShoppingBag,
@@ -13,6 +14,7 @@ import {
   ArrowUpRight,
   ExternalLink,
   Rocket,
+  Heart,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -60,6 +62,9 @@ export default function Dashboard() {
   const totalRevenue = orders.reduce((s, o) => s + o.total, 0);
   const avgTicket = orders.length > 0 ? totalRevenue / orders.length : 0;
   const pendingOrders = orders.filter((o) => o.status === "pending" || o.status === "confirmed").length;
+  const loyaltyConfig = getStoreConfig(storeId);
+  const loyaltyWallets = getWalletsByStore(storeId);
+  const loyaltyClients = loyaltyWallets.filter((w) => w.pointsBalance > 0 || w.cashbackBalance > 0).length;
 
   const isEmpty = products.length === 0 && orders.length === 0;
 
@@ -76,6 +81,9 @@ export default function Dashboard() {
         <KpiCard title="Categorias" value={String(categories.length)} icon={ShoppingBag} />
         <KpiCard title="Pedidos" value={String(orders.length)} icon={TrendingUp} />
         <KpiCard title="Faturamento" value={formatCurrency(totalRevenue)} icon={DollarSign} accent />
+        {loyaltyConfig.enabled && (
+          <KpiCard title="Clientes fidelizados" value={String(loyaltyClients)} icon={Heart} />
+        )}
       </div>
 
       {/* Getting started / Quick actions */}

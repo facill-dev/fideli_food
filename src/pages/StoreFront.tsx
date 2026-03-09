@@ -1,9 +1,10 @@
 import { useParams } from "react-router-dom";
 import { useState, useMemo } from "react";
 import { getStoreBySlug, getProductsByStore, getCategoriesByStore, NICHES } from "@/lib/multiTenantStorage";
+import { getStoreConfig, getWallet, pointsToMoney } from "@/lib/loyaltyStorage";
 import type { TenantProduct, TenantCategory, StoreConfig } from "@/lib/multiTenantStorage";
 import { motion } from "framer-motion";
-import { MapPin, Clock, Star, ShoppingBag, Plus, Minus, X } from "lucide-react";
+import { MapPin, Clock, Star, ShoppingBag, Plus, Minus, X, Heart, Coins } from "lucide-react";
 import { NicheIcon } from "@/components/NicheIcon";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -39,6 +40,8 @@ const StoreFront = () => {
   }
 
   const niche = NICHES.find((n) => n.id === store.niche);
+  const loyaltyConfig = getStoreConfig(store.id);
+  const loyaltyActive = loyaltyConfig.enabled && (loyaltyConfig.pointsEnabled || loyaltyConfig.cashbackEnabled);
   const filtered = activeCategory ? products.filter((p) => p.category === activeCategory) : products;
   const cartCount = cart.reduce((s, c) => s + c.qty, 0);
   const cartTotal = cart.reduce((s, c) => s + (c.product.promoPrice ?? c.product.price) * c.qty, 0);
@@ -133,6 +136,25 @@ const StoreFront = () => {
           </motion.div>
         </div>
       </section>
+
+      {/* Loyalty banner */}
+      {loyaltyActive && (
+        <div className="container mx-auto px-4 mb-4">
+          <div className="bg-primary/5 border border-primary/20 rounded-xl p-3 flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-primary/10 shrink-0">
+              <Heart className="h-5 w-5 text-primary" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-medium text-foreground">{loyaltyConfig.programName}</p>
+              <p className="text-xs text-muted-foreground">
+                {loyaltyConfig.pointsEnabled && `${loyaltyConfig.pointsPerReal} pontos por R$1`}
+                {loyaltyConfig.pointsEnabled && loyaltyConfig.cashbackEnabled && " · "}
+                {loyaltyConfig.cashbackEnabled && `${loyaltyConfig.cashbackPercent}% de cashback`}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Categories */}
       {categories.length > 0 && (
